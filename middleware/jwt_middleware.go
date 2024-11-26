@@ -2,19 +2,23 @@ package middleware
 
 import (
 	"github.com/gofiber/fiber/v2"
-	jwt "github.com/gofiber/jwt/v2"
+	jwt "github.com/gofiber/jwt/v3"
+	"github.com/herumitra/ziidaapi/helpers"
 )
 
-func JWTProtected() fiber.Handler {
+// JWTMiddleware memvalidasi token JWT pada setiap request yang membutuhkannya
+func JWTMiddleware() fiber.Handler {
 	return jwt.New(jwt.Config{
-		SigningKey:   []byte("secret"),
-		ErrorHandler: jwtError,
+		SigningKey:  []byte("secret"),       // Gunakan key yang aman untuk signing JWT
+		TokenLookup: "header:Authorization", // Token akan diambil dari header Authorization
+		AuthScheme:  "Bearer",               // Menentukan bahwa token akan menggunakan skema "Bearer"
+		ErrorHandler: func(c *fiber.Ctx, err error) error {
+			// Jika token tidak valid atau kadaluarsa, return custom error message
+			return c.Status(fiber.StatusUnauthorized).JSON(helpers.ErrorResponse{
+				FailedField: "Authorization",
+				Tag:         "invalid_token",
+				Value:       err.Error(), // Menampilkan error detail
+			})
+		},
 	})
-}
-
-func jwtError(c *fiber.Ctx, err error) error {
-	if err.Error() == "Missing or malformed JWT" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Missing or malformed JWT"})
-	}
-	return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid or expired JWT"})
 }

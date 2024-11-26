@@ -2,21 +2,21 @@ package helpers
 
 import "github.com/gofiber/fiber/v2"
 
-// Response is a struct for standard response formatting
+// Response represents the standard JSON response structure.
 type Response struct {
 	Status  string      `json:"status"`
 	Message string      `json:"message"`
 	Data    interface{} `json:"data"`
 }
 
-// ErrorResponse is a struct to format error message
+// ErrorResponse represents a structured way to express API errors.
 type ErrorResponse struct {
 	FailedField string `json:"failed_field"`
 	Tag         string `json:"tag"`
 	Value       string `json:"value"`
 }
 
-// JSONResponse formats the response for success or error
+// JSONResponse sends a formatted JSON response with a standard structure.
 func JSONResponse(c *fiber.Ctx, status int, message string, data interface{}) error {
 	resp := Response{
 		Status:  getStatusText(status),
@@ -26,7 +26,7 @@ func JSONResponse(c *fiber.Ctx, status int, message string, data interface{}) er
 	return c.Status(status).JSON(resp)
 }
 
-// Helper function to get status text (success/error)
+// getStatusText returns "success" or "error" based on the HTTP status code.
 func getStatusText(status int) string {
 	if status >= 200 && status < 300 {
 		return "success"
