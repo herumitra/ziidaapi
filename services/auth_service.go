@@ -10,6 +10,7 @@ import (
 	"github.com/herumitra/ziidaapi/helpers"
 	"github.com/herumitra/ziidaapi/models"
 	"github.com/redis/go-redis/v9"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -60,4 +61,13 @@ func generateJWT(user models.User) (string, error) {
 	// Replace with your actual signing key (e.g., an environment variable)
 	secretKey := []byte(os.Getenv("JWT_SECRET"))
 	return token.SignedString(secretKey)
+}
+
+func HashingPassword(password string) string {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return err.Error()
+	}
+	password = string(hashedPassword)
+	return password
 }
