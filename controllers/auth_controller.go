@@ -4,7 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/herumitra/ziidaapi/config"
 	"github.com/herumitra/ziidaapi/helpers"
-	"github.com/herumitra/ziidaapi/models"
+	"github.com/herumitra/ziidaapi/services"
 )
 
 type LoginRequest struct {
@@ -22,12 +22,13 @@ func Login(c *fiber.Ctx) error {
 	}
 
 	// Verifikasi kredensial dan hasilkan token JWT
-	token, err := models.AuthenticateUser(config.DB, config.RDB, req.Username, req.Password)
+	_, resp, err := services.AuthenticateUser(config.DB, config.RDB, req.Username, req.Password)
 	if err != nil {
 		return helpers.JSONResponse(c, fiber.StatusUnauthorized, "Incorrect username or password", nil)
 	}
 
-	return helpers.JSONResponse(c, fiber.StatusOK, "Login successful", fiber.Map{"token": token})
+	// Kembalikan token sebagai response
+	return helpers.JSONResponse(c, fiber.StatusOK, "Login successful", resp.Data)
 }
 
 // Logout menangani proses logout pengguna dengan menghapus token di Redis

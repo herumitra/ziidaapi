@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
@@ -9,10 +10,17 @@ import (
 	"github.com/herumitra/ziidaapi/controllers"
 	"github.com/herumitra/ziidaapi/middleware"
 	"github.com/herumitra/ziidaapi/seeders"
+	godotenv "github.com/joho/godotenv"
 )
 
 func main() {
+	// Load the .env file
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	app := fiber.New()
+
 	app.Use(logger.New())
 	config.SetupDatabase()
 
@@ -25,12 +33,18 @@ func main() {
 	// Define routes
 	app.Post("/login", controllers.Login)
 	app.Get("/logout", controllers.Logout)
-	api := app.Group("/api", middleware.JWTMiddleware())
+
+	// API routes with JWT middleware applied
+	api := app.Group("/api", middleware.JWTMiddleware) // Perbaikan: panggil middleware tanpa tanda kurung
 	api.Get("/users", controllers.GetAllUsers)
 	api.Post("/users", controllers.CreateUser)
 	api.Get("/users/:id", controllers.GetUser)
 	api.Put("/users/:id", controllers.UpdateUser)
 	api.Delete("/users/:id", controllers.DeleteUser)
 
-	app.Listen(":3000")
+	log.Println("Starting server...")
+
+	app.Listen(":" + os.Getenv("SERVER_PORT"))
+
+	log.Println("Server stopped")
 }

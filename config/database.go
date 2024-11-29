@@ -1,11 +1,12 @@
 package config
 
 import (
-	"context" // Impor context
+	"context"
 	"log"
+	"os"
 
-	"github.com/go-redis/redis/v8"
 	"github.com/herumitra/ziidaapi/models"
+	"github.com/redis/go-redis/v9"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -15,35 +16,37 @@ var (
 	RDB *redis.Client
 )
 
-// SetupDatabase initializes the PostgreSQL and Redis databases.
+// SetupDatabase initializes the database connection (Postgres & Redis)
 func SetupDatabase() {
-	// PostgreSQL connection
-	dsn := "host=localhost user=ziida password=S14n4kC3rd4s dbname=ziida port=5432 sslmode=disable TimeZone=Asia/Jakarta"
+	// Connect to Postgres
 	var err error
+	dsn := "host=" + os.Getenv("DB_HOST") + " user=" + os.Getenv("DB_USER") + " password=" + os.Getenv("DB_PASSWORD") + " dbname=" + os.Getenv("DB_NAME") + " port=" + os.Getenv("DB_PORT") + " sslmode=disable TimeZone=Asia/Jakarta"
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("failed to connect to PostgreSQL database: %v", err)
+	}
+
+	// Connect to Redis
+	RDB = redis.NewClient(&redis.Options{
+		Addr:     os.Getenv("REDIS_HOST") + ":" + os.Getenv("REDIS_PORT"),
+		Password: "",
+		DB:       0,
+	})
+
+	// Create a Context
+	ctx := context.Background()
+
+	// Test the connection to Redis
+	// coba := RDB.Ping(ctx).Val()
+	// _, err = RDB.Ping(ctx).Result()
+	_, err = RDB.Ping(ctx).Result()
+	if err != nil {
+		log.Fatalf("failed to connect to Redis database: %v", err)
 	}
 
 	// Automigrate tables
 	err = DB.AutoMigrate(&models.User{})
 	if err != nil {
 		log.Fatalf("failed to migrate PostgreSQL database: %v", err)
-	}
-
-	// Redis connection
-	RDB = redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379", // Redis server address
-		Password: "",               // No password set
-		DB:       0,                // Use default DB
-	})
-
-	// Create a context
-	ctx := context.Background()
-
-	// Test connection to Redis
-	_, err = RDB.Ping(ctx).Result()
-	if err != nil {
-		log.Fatalf("failed to connect to Redis: %v", err)
 	}
 }

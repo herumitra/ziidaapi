@@ -8,11 +8,11 @@ import (
 // SeedUsers menambahkan data pengguna ke database
 func SeedUsers() {
 	users := []models.User{
-		{Username: "john_doe", Password: "password123"},
-		{Username: "jane_doe", Password: "password456"},
-		{Username: "sam_smith", Password: "password789"},
-		{Username: "alice_williams", Password: "password000"},
-		{Username: "bob_jones", Password: "password111"},
+		{Username: "john_doe", Password: "password123", UserStatus: 1},
+		{Username: "jane_doe", Password: "password456", UserStatus: 1},
+		{Username: "sam_smith", Password: "password789", UserStatus: 1},
+		{Username: "alice_williams", Password: "password000", UserStatus: 1},
+		{Username: "bob_jones", Password: "password111", UserStatus: 1},
 	}
 
 	// Hash password dan simpan ke database
