@@ -1,6 +1,9 @@
 package controllers
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/herumitra/ziidaapi/config"
 	"github.com/herumitra/ziidaapi/helpers"
@@ -43,9 +46,17 @@ func Login(c *fiber.Ctx) error {
 
 // Logout menangani proses logout pengguna dengan menghapus token di Redis
 func Logout(c *fiber.Ctx) error {
+	// Get token from header
 	token := c.Get("Authorization")
-	if err := config.RDB.Del(c.Context(), token).Err(); err != nil {
+
+	// Remove "Bearer " prefix
+	if strings.HasPrefix(token, "Bearer ") {
+		token = token[len("Bearer "):]
+	}
+	redisKey := fmt.Sprintf("auth:%s", token) // Menambahkan prefix "auth:" pada key Redis
+
+	if err := config.RDB.Del(c.Context(), redisKey).Err(); err != nil {
 		return helpers.JSONResponse(c, fiber.StatusInternalServerError, "Failed to logout", nil)
 	}
-	return helpers.JSONResponse(c, fiber.StatusOK, "Logout successful", nil)
+	return helpers.JSONResponse(c, fiber.StatusOK, "Logout successful", redisKey)
 }

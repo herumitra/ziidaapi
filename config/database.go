@@ -30,7 +30,7 @@ func SetupDatabase() {
 	RDB = redis.NewClient(&redis.Options{
 		Addr:     os.Getenv("REDIS_HOST") + ":" + os.Getenv("REDIS_PORT"),
 		Password: "",
-		DB:       0,
+		DB:       8,
 	})
 
 	// Create a Context
@@ -45,7 +45,7 @@ func SetupDatabase() {
 	}
 
 	// Automigrate tables
-	err = DB.AutoMigrate(&models.User{})
+	err = DB.AutoMigrate(&models.User{}, &models.Branch{}, &models.UserBranch{})
 	if err != nil {
 		log.Fatalf("failed to migrate PostgreSQL database: %v", err)
 	}
