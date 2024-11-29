@@ -36,11 +36,19 @@ func main() {
 
 	// API routes with JWT middleware applied
 	api := app.Group("/api", middleware.JWTMiddleware) // Perbaikan: panggil middleware tanpa tanda kurung
+
+	// Endpoint Users
 	api.Get("/users", controllers.GetAllUsers)
 	api.Post("/users", controllers.CreateUser)
 	api.Get("/users/:id", controllers.GetUser)
 	api.Put("/users/:id", controllers.UpdateUser)
 	api.Delete("/users/:id", controllers.DeleteUser)
+	// Endpoint Branch
+	api.Get("/branch", controllers.GetAllBranch)
+	api.Post("/branch", controllers.CreateBranch)
+	api.Get("/branch/:id", controllers.GetBranch)
+	api.Put("/branch/:id", controllers.UpdateBranch)
+	api.Delete("/branch/:id", controllers.DeleteBranch)
 
 	log.Println("Starting server...")
 
