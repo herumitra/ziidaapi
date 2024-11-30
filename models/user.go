@@ -7,9 +7,12 @@ import (
 
 type User struct {
 	gorm.Model
-	Username   string `gorm:"unique;not null" json:"username"`
-	Password   string `gorm:"not null" json:"-"`
-	UserStatus int    `gorm:"not null" json:"user_status" default:"0"`
+	Username   string `gorm:"type:varchar(100);unique;not null" json:"username" validate:"required"`
+	Password   string `gorm:"not null" json:"password" validate:"required"`
+	Name       string `gorm:"type:varchar(255);not null" json:"name" validate:"required"`
+	Address    string `gorm:"type:text;" json:"address"`
+	UserRole   string `gorm:"type enum('user','cashier','finance','administrator');not null" json:"user_role" validate:"required"`
+	UserStatus string `gorm:"type:enum('active','inactive');default:'inactive'" json:"user_status"`
 }
 
 // HashPassword function hashes the password
