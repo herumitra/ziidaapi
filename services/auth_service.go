@@ -71,3 +71,19 @@ func HashingPassword(password string) string {
 	password = string(hashedPassword)
 	return password
 }
+
+
+func SetBranchIDToContext(rdb *redis.Client, token string, branchID string) (string, *helpers.Response, error) {
+	redisKey := "auth:" + token
+	ctx := context.Background()
+	err := rdb.HSet(ctx, redisKey, "branchID", branchID).Err()
+	if err != nil {
+		return "", nil, fmt.Errorf("error saving branchID to Redis: %v", err)
+	}
+
+	return branchID, &helpers.Response{
+		Status:  "success",
+		Message: "Branch telah dipilih",
+		Data:    "branch_id: " + branchID,
+	},nil
+}

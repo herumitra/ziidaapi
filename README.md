@@ -14,11 +14,25 @@ Di dalam repositori ini juga kami terapkan framework `Fiber` serta dependensi `G
 >Tambahkan file `.env` dalam direktori paling luar dari project di repositori ini, dan masukkan teks berikut di dalamnya.
 
 ```bash
-JWT_SECRET=123456qwerty
-DB_USER=root
-DB_PASSWORD=root
-DB_NAME=fiber
-DB_PORT=3306
-DB_SERVER=localhost
-SERVER_PORT=6969
+JWT_SECRET=Sikrit1234
+DB_USER=ziida
+DB_PASSWORD=Pass1234
+DB_NAME=ziida
+DB_HOST=localhost
+DB_PORT=5432
+REDIS_HOST=localhost
+REDIS_PORT=6379
+SERVER_PORT=4001
+```
+
+>Jalankan perintah di bawah ini dalam query database `PostgreSQL`:S
+```bash
+CREATE TYPE journal_method AS ENUM ('manual', 'automatic');
+CREATE TYPE user_role AS ENUM ('operator', 'administrator', 'cashier', 'finance');
+CREATE TYPE status_user AS ENUM ('active', 'inactive');
+```
+
+>Jalankan perintah ini untuk generate tabel-tabel di database `PostgreSQL` serta seed data pengguna:
+```bash
+go run main.go seed
 ```

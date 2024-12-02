@@ -45,28 +45,6 @@ type Member struct {
 	MemberCategory MemberCategory `gorm:"foreignKey:MemberCategoryId"`
 }
 
-// SupplierCategory model
-type SupplierCategory struct {
-	ID       uint   `gorm:"primaryKey;autoIncrement" json:"id"`
-	Name     string `gorm:"type:varchar(100);not null" json:"name" validate:"required"`
-	BranchID int64  `gorm:"not null" json:"branch_id" validate:"required"`
-
-	Branch Branch `gorm:"foreignKey:BranchID"`
-}
-
-// Supplier model
-type Supplier struct {
-	ID                 string `gorm:"type:varchar(19);primaryKey" json:"id" validate:"required"`
-	Name               string `gorm:"type:varchar(100);not null" json:"name" validate:"required"`
-	Phone              string `gorm:"type:varchar(100);" json:"phone"`
-	Address            string `gorm:"type:text;" json:"address"`
-	SupplierCategoryId uint   `gorm:"not null" json:"supplier_category_id" validate:"required"`
-	BranchID           int64  `gorm:"not null" json:"branch_id" validate:"required"`
-
-	Branch           Branch           `gorm:"foreignKey:BranchID"`
-	SupplierCategory SupplierCategory `gorm:"foreignKey:SupplierCategoryId"`
-}
-
 // ProductCategory model
 type ProductCategory struct {
 	ID       uint   `gorm:"primaryKey;autoIncrement" json:"id"`
@@ -92,4 +70,38 @@ type Product struct {
 	Branch          Branch          `gorm:"foreignKey:BranchID"`
 	ProductCategory ProductCategory `gorm:"foreignKey:ProductCategoryId"`
 	Unit            Unit            `gorm:"foreignKey:UnitId"`
+}
+
+// SupplierCategory model
+type SupplierCategory struct {
+	ID       uint   `gorm:"primaryKey;autoIncrement" json:"id"`
+	Name     string `gorm:"type:varchar(100);not null" json:"name" validate:"required"`
+	BranchID int64  `gorm:"not null" json:"branch_id" validate:"required"`
+
+	Branch Branch `gorm:"foreignKey:BranchID"`
+}
+
+// Supplier model
+type Supplier struct {
+	ID                 string `gorm:"type:varchar(19);primaryKey" json:"id" validate:"required"`
+	Name               string `gorm:"type:varchar(100);not null" json:"name" validate:"required"`
+	Phone              string `gorm:"type:varchar(100);" json:"phone"`
+	Address            string `gorm:"type:text;" json:"address"`
+	SupplierCategoryId uint   `gorm:"not null" json:"supplier_category_id" validate:"required"`
+	BranchID           int64  `gorm:"not null" json:"branch_id" validate:"required"`
+
+	Branch           Branch           `gorm:"foreignKey:BranchID"`
+	SupplierCategory SupplierCategory `gorm:"foreignKey:SupplierCategoryId"`
+}
+
+// SupplierProduct model
+type SupplierProduct struct {
+	ID         string `gorm:"type:varchar(19);primaryKey" json:"id" validate:"required"`
+	SupplierId string `gorm:"type:varchar(19);not null" json:"supplier_id" validate:"required"`
+	ProductId  string `gorm:"type:varchar(19);not null" json:"product_id" validate:"required"`
+	BranchID   int64  `gorm:"not null" json:"branch_id" validate:"required"`
+
+	Branch   Branch   `gorm:"foreignKey:BranchID"`
+	Supplier Supplier `gorm:"foreignKey:SupplierId"`
+	Product  Product  `gorm:"foreignKey:ProductId"`
 }

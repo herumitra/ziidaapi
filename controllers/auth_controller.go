@@ -26,7 +26,7 @@ func Login(c *fiber.Ctx) error {
 		return helpers.JSONResponse(c, fiber.StatusBadRequest, "Invalid input", nil)
 	}
 
-	cek_status := config.DB.Where("username = ? AND user_status = ?", req.Username, 1).First(&users)
+	cek_status := config.DB.Where("username = ? AND user_status = ?", req.Username, models.Active).First(&users)
 
 	// Cek apakah user status aktif
 	if err := cek_status.Error; err != nil {
