@@ -29,7 +29,7 @@ SERVER_PORT=4001
 ```bash
 CREATE TYPE journal_method AS ENUM ('manual', 'automatic');
 CREATE TYPE user_role AS ENUM ('operator', 'administrator', 'cashier', 'finance');
-CREATE TYPE status_user AS ENUM ('active', 'inactive');
+CREATE TYPE data_status AS ENUM ('active', 'inactive');
 ```
 
 >Jalankan perintah ini untuk generate tabel-tabel di database `PostgreSQL` serta seed data pengguna:

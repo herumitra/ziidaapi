@@ -64,7 +64,7 @@ func JWTMiddleware(c *fiber.Ctx) error {
 		var users []models.User
 
 		// Cek apakah user status aktif
-		if config.DB.Where("id = ? AND user_status = ?", userID, 1).First(&users).Error == nil {
+		if config.DB.Where("id = ? AND user_status ='active'", userID).First(&users).Error == nil {
 			// User aktif, lanjutkan ke handler berikutnya
 			return c.Next()
 		}

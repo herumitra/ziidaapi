@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -72,8 +73,7 @@ func HashingPassword(password string) string {
 	return password
 }
 
-
-func SetBranchIDToContext(rdb *redis.Client, token string, branchID string) (string, *helpers.Response, error) {
+func SetBranchIdToRedis(rdb *redis.Client, token string, branchID string) (string, *helpers.Response, error) {
 	redisKey := "auth:" + token
 	ctx := context.Background()
 	err := rdb.HSet(ctx, redisKey, "branchID", branchID).Err()
@@ -85,5 +85,30 @@ func SetBranchIDToContext(rdb *redis.Client, token string, branchID string) (str
 		Status:  "success",
 		Message: "Branch telah dipilih",
 		Data:    "branch_id: " + branchID,
-	},nil
+	}, nil
+}
+
+func JWTDecodeID(token string) string {
+	// Remove "Bearer " prefix
+	if strings.HasPrefix(token, "Bearer ") {
+		token = token[len("Bearer "):]
+	}
+
+	// Verify token JWT using secret key
+	parsedToken, _ := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
+		secretKey := []byte(os.Getenv("JWT_SECRET"))
+		return secretKey, nil
+	})
+
+	// Get claim from token (example: user ID)
+	claims, ok := parsedToken.Claims.(jwt.MapClaims)
+	if !ok || !parsedToken.Valid {
+		return ""
+	}
+
+	// Get user ID from claims
+	userID := claims["sub"].(float64)
+
+	return fmt.Sprintf("%v", userID)
+
 }

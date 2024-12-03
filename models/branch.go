@@ -33,6 +33,6 @@ type Branch struct {
 	AccountNumber string        `gorm:"type:varchar(100);" json:"account_number"`
 	TaxPercentage int           `gorm:"type:int;default:0" json:"tax_percentage"`
 	JournalMethod JournalMethod `gorm:"type:journal_method; default:'automatic'" json:"journal_method" validate:"required"`
-	BranchStatus  int           `gorm:"not null" json:"branch_status" default:"0"`
+	BranchStatus  DataStatus    `gorm:"type:data_status;default:'inactive'" json:"branch_status"`
 	LicenseDate   time.Time     `gorm:"not null" json:"license_date" validate:"required"`
 }

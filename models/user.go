@@ -6,11 +6,11 @@ import (
 )
 
 // Mendefinisikan custom type untuk ENUM StatusUser
-type StatusUser string
+type DataStatus string
 
 const (
-	Active   StatusUser = "active"
-	Inactive StatusUser = "inactive"
+	Active   DataStatus = "active"
+	Inactive DataStatus = "inactive"
 )
 
 // Mendefinisikan custom type untuk ENUM UserRole
@@ -26,11 +26,11 @@ const (
 type User struct {
 	gorm.Model
 	Username   string     `gorm:"type:varchar(100);unique;not null" json:"username" validate:"required"`
-	Password   string     `gorm:"not null" json:"password" validate:"required"`
+	Password   string     `gorm:"type:text;not null" json:"password" validate:"required"`
 	Name       string     `gorm:"type:varchar(255);not null" json:"name" validate:"required"`
 	Address    string     `gorm:"type:text;" json:"address"`
 	UserRole   UserRole   `gorm:"type:user_role;default:'operator'; not null" json:"user_role" validate:"required"`
-	UserStatus StatusUser `gorm:"type:user_status;default:'inactive'" json:"user_status"`
+	UserStatus DataStatus `gorm:"type:user_status;default:'inactive'" json:"user_status"`
 }
 
 // HashPassword function hashes the password

@@ -45,7 +45,20 @@ func SetupDatabase() {
 	}
 
 	// Automigrate tables
-	err = DB.AutoMigrate(&models.User{}, &models.Branch{}, &models.UserBranch{})
+	err = DB.AutoMigrate(
+		&models.User{},
+		&models.Branch{},
+		&models.UserBranch{},
+		&models.Unit{},
+		&models.UnitConversion{},
+		&models.MemberCategory{},
+		&models.Member{},
+		&models.ProductCategory{},
+		&models.Product{},
+		&models.SupplierCategory{},
+		&models.Supplier{},
+		&models.SupplierProduct{},
+	)
 	if err != nil {
 		log.Fatalf("failed to migrate PostgreSQL database: %v", err)
 	}

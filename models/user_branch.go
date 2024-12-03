@@ -14,6 +14,6 @@ type UserBranch struct {
 	DeletedAt gorm.DeletedAt `gorm:"index"` // Soft delete
 
 	// Relasi ke User dan Branch (tidak perlu dikaitkan secara eksplisit)
-	User   User   `gorm:"foreignKey:UserID"`
-	Branch Branch `gorm:"foreignKey:BranchID"`
+	// User   User   `gorm:"foreignKey:UserID"`
+	// Branch Branch `gorm:"foreignKey:BranchID"`
 }

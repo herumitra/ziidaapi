@@ -27,12 +27,20 @@ func main() {
 	// Check for command line arguments
 	if len(os.Args) > 1 && os.Args[1] == "seed" {
 		seeders.SeedUsers()
+		seeders.SeedBranch()
+		seeders.SeedUserBranch()
+		seeders.SeedUnit()
+		seeders.SeedProductCategory()
+		seeders.SeedProduct()
+		seeders.SeedUnitConversion()
 		os.Exit(0) // Exit after seeding
 	}
 
 	// Define routes
 	app.Post("/login", controllers.Login)
 	app.Get("/logout", controllers.Logout)
+	app.Post("/set_branch", middleware.JWTMiddleware, controllers.SetBranch)
+	app.Get("/profile", middleware.JWTMiddleware, controllers.GetBranchFromToken)
 
 	// API routes with JWT middleware applied
 	api := app.Group("/api", middleware.JWTMiddleware) // Perbaikan: panggil middleware tanpa tanda kurung
@@ -43,12 +51,14 @@ func main() {
 	api.Get("/users/:id", controllers.GetUser)
 	api.Put("/users/:id", controllers.UpdateUser)
 	api.Delete("/users/:id", controllers.DeleteUser)
+
 	// Endpoint Branch
 	api.Get("/branch", controllers.GetAllBranch)
 	api.Post("/branch", controllers.CreateBranch)
 	api.Get("/branch/:id", controllers.GetBranch)
 	api.Put("/branch/:id", controllers.UpdateBranch)
 	api.Delete("/branch/:id", controllers.DeleteBranch)
+	api.Get("/get_branches", controllers.GetBranchByUserIdFromToken)
 
 	log.Println("Starting server...")
 
