@@ -16,9 +16,9 @@ var user models.User
 
 // Fungsi untuk generate ID user
 func generateUserID(db *gorm.DB) (string, error) {
-	// Ambil tanggal saat ini dalam format YYYYMMDD
+	// Ambil tanggal saat ini dalam format DDMMYYYY
 	now := time.Now()
-	dateStr := now.Format("20061202") // Format YYYYMMDD
+	dateStr := now.Format("02012006") // Format DDMMYYYY
 
 	var user models.User // Menggunakan model yang sudah ada
 
