@@ -21,7 +21,7 @@ const (
 
 // Initialize user model
 type User struct {
-	ID         string     `gorm:"type:varchar(19);primaryKey" json:"id" validate:"required"`
+	ID         string     `gorm:"type:varchar(15);primaryKey" json:"id" validate:"required"`
 	Username   string     `gorm:"type:varchar(255);not null;unique" json:"username" validate:"required"`
 	Password   string     `gorm:"type:text;not null" json:"password" validate:"required"`
 	Name       string     `gorm:"type:varchar(255);not null" json:"name" validate:"required"`

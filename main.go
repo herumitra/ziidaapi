@@ -7,6 +7,7 @@ import (
 	fiber "github.com/gofiber/fiber/v2"
 	logger "github.com/gofiber/fiber/v2/middleware/logger"
 	config "github.com/herumitra/ziidaapi/config"
+	controllers "github.com/herumitra/ziidaapi/controllers"
 	seeders "github.com/herumitra/ziidaapi/seeders"
 	godotenv "github.com/joho/godotenv"
 )
@@ -42,6 +43,9 @@ func main() {
 	app.Get("/testing", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World!")
 	})
+
+	// Post Create User
+	app.Post("/users", controllers.CreateUser)
 
 	// Start app
 	app.Listen(":" + serverPort)
