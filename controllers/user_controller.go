@@ -12,8 +12,6 @@ import (
 	gorm "gorm.io/gorm"
 )
 
-var user models.User
-
 // Fungsi untuk generate ID user
 func generateUserID(db *gorm.DB) (string, error) {
 	// Ambil tanggal saat ini dalam format DDMMYYYY
@@ -50,31 +48,105 @@ func generateUserID(db *gorm.DB) (string, error) {
 
 // CreateUser menangani pembuatan pengguna baru
 func CreateUser(c *fiber.Ctx) error {
+	// Buat instance baru untuk User
 	var user models.User
 
 	// Parse input JSON menjadi struct User
 	if err := c.BodyParser(&user); err != nil {
-		return helpers.JSONResponse(c, fiber.StatusBadRequest, "Invalid input", nil)
+		return helpers.JSONResponse(c, fiber.StatusBadRequest, "Invalid input", err)
 	}
 
 	// Generate ID untuk user
 	userID, err := generateUserID(config.DB) // Pastikan generateUserID menerima DB dan mengembalikan ID yang valid
 	if err != nil {
-		return helpers.JSONResponse(c, fiber.StatusInternalServerError, "Failed to generate user ID", nil)
+		return helpers.JSONResponse(c, fiber.StatusInternalServerError, "Create user failed", "Failed to generate user ID")
 	}
 
 	// Set ID user yang sudah digenerate
 	user.ID = userID
 
+	// Cek panjang password
+	if len(user.Password) < 8 {
+		return helpers.JSONResponse(c, fiber.StatusInternalServerError, "Create user failed", "Password must be at least 8 characters long")
+	}
+
 	// Hash password sebelum disimpan
 	if err := user.HashPassword(); err != nil {
-		return helpers.JSONResponse(c, fiber.StatusInternalServerError, "Failed to hash password", nil)
+		return helpers.JSONResponse(c, fiber.StatusInternalServerError, "Create user failed", "Failed to hash password")
 	}
 
 	// Simpan user ke database
 	if err := config.DB.Create(&user).Error; err != nil {
-		return helpers.JSONResponse(c, fiber.StatusInternalServerError, "Failed to create user", nil)
+		return helpers.JSONResponse(c, fiber.StatusInternalServerError, "Failed to create user", err)
 	}
 
+	// Statemen terakhir jika tidak ditemukan error
 	return helpers.JSONResponse(c, fiber.StatusCreated, "User created successfully", user)
+}
+
+// UpdateUser menangani pembaruan pengguna
+func UpdateUser(c *fiber.Ctx) error {
+	id := c.Params("id")
+	var user models.User
+
+	// Cari user berdasarkan ID
+	if err := config.DB.First(&user, id).Error; err != nil {
+		return helpers.JSONResponse(c, fiber.StatusNotFound, "User not found", err)
+	}
+
+	// Parsing request body untuk update data
+	if err := c.BodyParser(&user); err != nil {
+		return helpers.JSONResponse(c, fiber.StatusBadRequest, "Invalid input", err)
+	}
+
+	// Update data user
+	if err := config.DB.Save(&user).Error; err != nil {
+		return helpers.JSONResponse(c, fiber.StatusInternalServerError, "Failed to update user", err)
+	}
+
+	return helpers.JSONResponse(c, fiber.StatusOK, "User updated successfully", user)
+}
+
+// DeleteUser menangani penghapusan pengguna
+func DeleteUser(c *fiber.Ctx) error {
+	id := c.Params("id")
+	var user models.User
+
+	// Cari user berdasarkan ID
+	if err := config.DB.Where("id = ?", id).First(&user).Error; err != nil {
+		return helpers.JSONResponse(c, fiber.StatusNotFound, "User not found", err)
+	}
+
+	// Hapus user
+	if err := config.DB.Where("id = ?", id).Delete(&user).Error; err != nil {
+		return helpers.JSONResponse(c, fiber.StatusInternalServerError, "Failed to delete user", err)
+	}
+
+	return helpers.JSONResponse(c, fiber.StatusOK, "User deleted successfully", id)
+}
+
+// GetUser menangani penampilan pengguna
+func GetUser(c *fiber.Ctx) error {
+	id := c.Params("id")
+	var user models.User
+
+	// Cari user berdasarkan ID
+	if err := config.DB.Where("id = ?", id).First(&user).Error; err != nil {
+		return helpers.JSONResponse(c, fiber.StatusNotFound, "User not found", err)
+	}
+
+	return helpers.JSONResponse(c, fiber.StatusOK, "User found", user)
+}
+
+// GetAllUsers menangani penampilan semua pengguna
+func GetAllUsers(c *fiber.Ctx) error {
+	var users []models.User
+
+	// Mengambil semua data user dari database
+	if err := config.DB.Find(&users).Error; err != nil {
+		return helpers.JSONResponse(c, fiber.StatusInternalServerError, "Get users failed", "Failed to fetch users")
+	}
+
+	// Mengembalikan response sukses dengan data pengguna
+	return helpers.JSONResponse(c, fiber.StatusOK, "Users retrieved successfully", users)
 }
