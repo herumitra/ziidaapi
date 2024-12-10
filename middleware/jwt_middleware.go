@@ -3,9 +3,8 @@ package middleware
 import (
 	context "context"
 	fmt "fmt"
-	strings "strings"
-
 	os "os"
+	strings "strings"
 
 	fiber "github.com/gofiber/fiber/v2"
 	jwt "github.com/golang-jwt/jwt/v5"
@@ -25,7 +24,7 @@ func JWTMiddleware(c *fiber.Ctx) error {
 
 	// Check token jika kosong
 	if token == "" {
-		return helpers.JSONResponse(c, fiber.StatusUnauthorized, "Missing token", nil)
+		return helpers.JSONResponse(c, fiber.StatusUnauthorized, "Missing token", "Insert valid token to access this endpoint !")
 	}
 
 	// Verifikasi token menggunakan secret key
@@ -46,7 +45,7 @@ func JWTMiddleware(c *fiber.Ctx) error {
 	redisValue, err := rdb.Get(ctx, redisKey).Result()
 	if err != redis.Nil {
 		// Jika token ditemukan di Redis, maka gagal login
-		return helpers.JSONResponse(c, fiber.StatusUnauthorized, "Using token failed, token was revoked", nil)
+		return helpers.JSONResponse(c, fiber.StatusUnauthorized, "Using token failed, token was revoked", "Insert valid token to access this endpoint !")
 	}
 
 	fmt.Println(redisValue)
