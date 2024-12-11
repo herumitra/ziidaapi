@@ -35,7 +35,20 @@ func SetupDB() (err error) {
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	// Migrate the schema
-	DB.AutoMigrate(&models.User{})
+	DB.AutoMigrate(
+		&models.User{},
+		&models.Branch{},
+		&models.UserBranch{},
+		&models.Unit{},
+		&models.UnitConversion{},
+		&models.ProductCategory{},
+		&models.Product{},
+		&models.MemberCategory{},
+		&models.Member{},
+		&models.SupplierCategory{},
+		&models.Supplier{},
+		&models.SupplierProduct{},
+	)
 
 	// Check connection Postgres
 	if err != nil {

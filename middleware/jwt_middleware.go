@@ -3,6 +3,7 @@ package middleware
 import (
 	context "context"
 	fmt "fmt"
+	log "log"
 	os "os"
 	strings "strings"
 
@@ -10,7 +11,6 @@ import (
 	jwt "github.com/golang-jwt/jwt/v5"
 	config "github.com/herumitra/ziidaapi/config"
 	helpers "github.com/herumitra/ziidaapi/helpers"
-	redis "github.com/redis/go-redis/v9"
 )
 
 func JWTMiddleware(c *fiber.Ctx) error {
@@ -22,9 +22,24 @@ func JWTMiddleware(c *fiber.Ctx) error {
 		token = token[len("Bearer "):]
 	}
 
-	// Check token jika kosong
+	// Periksa jika token kosong
 	if token == "" {
-		return helpers.JSONResponse(c, fiber.StatusUnauthorized, "Missing token", "Insert valid token to access this endpoint !")
+		return helpers.JSONResponse(c, fiber.StatusUnauthorized, "Missing token", "Insert valid token to access this endpoint!")
+	}
+
+	// Cek apakah token masuk dalam blacklist Redis
+	ctx := context.Background()
+	redisKey := fmt.Sprintf("blacklist:%s", token)
+	rdb := config.RDB
+	isBlacklisted, err := rdb.Exists(ctx, redisKey).Result()
+
+	if err != nil {
+		log.Printf("Error checking token in Redis: %v", err)
+		return helpers.JSONResponse(c, fiber.StatusInternalServerError, "Token verification failed", "Server error!")
+	}
+
+	if isBlacklisted > 0 {
+		return helpers.JSONResponse(c, fiber.StatusUnauthorized, "Using token failed", "Token was revoked, please login again!")
 	}
 
 	// Verifikasi token menggunakan secret key
@@ -33,28 +48,16 @@ func JWTMiddleware(c *fiber.Ctx) error {
 		return secretKey, nil
 	})
 
-	// Jika token tidak valid
-	if err != nil {
-		return helpers.JSONResponse(c, fiber.StatusUnauthorized, "Invalid token", "Try to login again")
+	if err != nil || !parsedToken.Valid {
+		return helpers.JSONResponse(c, fiber.StatusUnauthorized, "Invalid token", "Try to login again!")
 	}
 
-	// Verify token JWT using Redis to check if the token is still valid
-	ctx := context.Background()
-	redisKey := fmt.Sprintf("auth:%s", token) // Gunakan prefix "auth:" untuk key Redis
-	rdb := config.RDB                         // Ambil Redis client dari context
-	redisValue, err := rdb.Get(ctx, redisKey).Result()
-	if err != redis.Nil {
-		// Jika token ditemukan di Redis, maka gagal login
-		return helpers.JSONResponse(c, fiber.StatusUnauthorized, "Using token failed, token was revoked", "Insert valid token to access this endpoint !")
+	// Periksa klaim token (opsional, misalnya validasi user_id, role, dll.)
+	claims, ok := parsedToken.Claims.(jwt.MapClaims)
+	if !ok || claims["sub"] == nil {
+		return helpers.JSONResponse(c, fiber.StatusUnauthorized, "Invalid token claims", "Try to login again!")
 	}
 
-	fmt.Println(redisValue)
-
-	// Jika token valid
-	if parsedToken.Valid {
-		return c.Next()
-	}
-
-	// Jika token tidak valid
-	return helpers.JSONResponse(c, fiber.StatusUnauthorized, "Unauthorized access", err)
+	// Lanjutkan ke handler berikutnya
+	return c.Next()
 }

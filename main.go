@@ -8,7 +8,7 @@ import (
 	logger "github.com/gofiber/fiber/v2/middleware/logger"
 	config "github.com/herumitra/ziidaapi/config"
 	controllers "github.com/herumitra/ziidaapi/controllers"
-	"github.com/herumitra/ziidaapi/middleware"
+	middleware "github.com/herumitra/ziidaapi/middleware"
 	seeders "github.com/herumitra/ziidaapi/seeders"
 	godotenv "github.com/joho/godotenv"
 )
@@ -31,6 +31,12 @@ func main() {
 	// Check for command line arguments
 	if len(os.Args) > 1 && os.Args[1] == "seed" {
 		seeders.UserSeed()
+		seeders.BranchSeed()
+		seeders.UserBranchSeed()
+		seeders.UnitSeed()
+		seeders.UnitConversionSeed()
+		seeders.ProductCategorySeed()
+		seeders.ProductSeed()
 		os.Exit(0) // Exit after seeding
 	}
 
@@ -42,9 +48,13 @@ func main() {
 
 	// Endpoints for Auth
 	app.Post("/login", controllers.Login)
+	app.Post("/logout", controllers.Logout)
 
 	// API routes with JWT middleware applied
 	api := app.Group("/api", middleware.JWTMiddleware) // Perbaikan: panggil middleware tanpa tanda kurung
+
+	// Endpoints for SetBranch
+	api.Post("/set_branch", controllers.SetBranch)
 
 	// Endpoints for User
 	api.Post("/users", controllers.CreateUser)       //Create new User
