@@ -66,4 +66,5 @@ func main() {
 	// Start app
 	app.Listen(":" + serverPort)
 
+	// app.Get("/operational", JWTMiddleware, RoleMiddleware(models.Operator), OperationalHandler)
 }

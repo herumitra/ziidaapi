@@ -136,7 +136,7 @@ func SetBranch(c *fiber.Ctx) error {
 	// Ambil token dari header Authorization
 	token := c.Get("Authorization")
 
-	// Remove prefix "Bearer " jika ada
+	// Hapus prefix "Bearer " jika ada
 	if strings.HasPrefix(token, "Bearer ") {
 		token = token[len("Bearer "):]
 	}
@@ -162,7 +162,7 @@ func SetBranch(c *fiber.Ctx) error {
 	}
 
 	// Ambil user ID dari klaim token
-	userID := claims["sub"].(string)
+	userID := int(claims["sub"].(float64))
 
 	// Parse input JSON untuk mendapatkan branch ID
 	var request struct {
@@ -178,8 +178,14 @@ func SetBranch(c *fiber.Ctx) error {
 		return helpers.JSONResponse(c, fiber.StatusForbidden, "Invalid branch ID", "Branch not associated with this user!")
 	}
 
-	// Buat token JWT baru dengan klaim branch_id
-	newToken, err := generateBranchJWT(userID, request.BranchID)
+	// Ambil user_role dari tabel users berdasarkan user_id
+	var user models.User
+	if err := config.DB.Select("user_role").Where("id = ?", userID).First(&user).Error; err != nil {
+		return helpers.JSONResponse(c, fiber.StatusInternalServerError, "Failed to set branch", "Unable to retrieve user role")
+	}
+
+	// Buat token JWT baru dengan klaim branch_id dan user_role
+	newToken, err := generateBranchJWTWithRole(userID, request.BranchID, string(user.UserRole))
 	if err != nil {
 		return helpers.JSONResponse(c, fiber.StatusInternalServerError, "Failed to set branch", "Failed to generate new token")
 	}
@@ -195,17 +201,19 @@ func SetBranch(c *fiber.Ctx) error {
 	})
 }
 
-// Fungsi generateBranchJWT untuk membuat token baru dengan klaim branch_id
-func generateBranchJWT(userID string, branchID string) (string, error) {
-	// Define JWT claims
+func generateBranchJWTWithRole(userID int, branchID string, userRole string) (string, error) {
+	// Definisikan klaim untuk token baru
 	claims := jwt.MapClaims{
-		"sub":       userID,
-		"branch_id": branchID,
-		"exp":       time.Now().Add(8 * time.Hour).Unix(),
+		"sub":       userID,                               // User ID
+		"branch_id": branchID,                             // Branch ID
+		"user_role": userRole,                             // User Role
+		"exp":       time.Now().Add(8 * time.Hour).Unix(), // Expired dalam 8 jam
 	}
 
-	// Generate the token using the claims and a signing key
+	// Buat token baru dengan klaim
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	// Gunakan secret key untuk menandatangani token
 	secretKey := []byte(os.Getenv("JWT_SECRET"))
 	return token.SignedString(secretKey)
 }
