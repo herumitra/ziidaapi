@@ -56,12 +56,18 @@ func main() {
 	// Endpoints for SetBranch
 	api.Post("/set_branch", controllers.SetBranch)
 
+	// API routes with JWT and role middleware applied
+	api_role := app.Group("/api", middleware.JWTMiddleware, middleware.RoleMiddleware("administrator"))
+
 	// Endpoints for User
-	api.Post("/users", controllers.CreateUser)       //Create new User
-	api.Get("/users", controllers.GetAllUsers)       //Menampilkan semua user
-	api.Get("/users/:id", controllers.GetUser)       //Menampilkan user berdasarkan ID
-	api.Put("/users/:id", controllers.UpdateUser)    //Update user berdasarkan ID
-	api.Delete("/users/:id", controllers.DeleteUser) //Hapus user berdasarkan ID
+	api_role.Post("/users", controllers.CreateUser)       //Create new User
+	api_role.Get("/users", controllers.GetAllUsers)       //Menampilkan semua user
+	api_role.Get("/users/:id", controllers.GetUser)       //Menampilkan user berdasarkan ID
+	api_role.Put("/users/:id", controllers.UpdateUser)    //Update user berdasarkan ID
+	api_role.Delete("/users/:id", controllers.DeleteUser) //Hapus user berdasarkan ID
+
+	// Endpoints for Branch
+	api_role.Post("/branches", controllers.CreateBranch) //Create new Branch
 
 	// Start app
 	app.Listen(":" + serverPort)

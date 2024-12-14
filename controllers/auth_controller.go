@@ -162,7 +162,7 @@ func SetBranch(c *fiber.Ctx) error {
 	}
 
 	// Ambil user ID dari klaim token
-	userID := int(claims["sub"].(float64))
+	userID := string(claims["sub"].(string))
 
 	// Parse input JSON untuk mendapatkan branch ID
 	var request struct {
@@ -201,7 +201,7 @@ func SetBranch(c *fiber.Ctx) error {
 	})
 }
 
-func generateBranchJWTWithRole(userID int, branchID string, userRole string) (string, error) {
+func generateBranchJWTWithRole(userID string, branchID string, userRole string) (string, error) {
 	// Definisikan klaim untuk token baru
 	claims := jwt.MapClaims{
 		"sub":       userID,                               // User ID

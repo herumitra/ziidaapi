@@ -36,7 +36,6 @@ func SetupDB() (err error) {
 
 	// Migrate the schema
 	DB.AutoMigrate(
-		&models.Menu{},
 		&models.User{},
 		&models.Branch{},
 		&models.UserBranch{},

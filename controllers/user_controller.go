@@ -12,40 +12,6 @@ import (
 	gorm "gorm.io/gorm"
 )
 
-// Fungsi untuk generate ID user
-func generateUserID(db *gorm.DB) (string, error) {
-	// Ambil tanggal saat ini dalam format DDMMYYYY
-	now := time.Now()
-	dateStr := now.Format("02012006") // Format DDMMYYYY
-
-	var user models.User // Menggunakan model yang sudah ada
-
-	// Ambil urutan terbesar untuk tanggal tersebut
-	if err := db.Where("id LIKE ?", "USR"+dateStr+"%").Order("id DESC").First(&user).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			// Jika tidak ada user sebelumnya, urutan awal adalah 1
-			return fmt.Sprintf("USR%s001", dateStr), nil
-		} else {
-			return "", fmt.Errorf("error querying database: %v", err)
-		}
-	}
-
-	// Jika ditemukan user sebelumnya, ambil urutan terakhir dan tambah 1
-	lastID := user.ID                // Ambil ID user.ID
-	seqStr := lastID[len(lastID)-3:] // Ambil 3 digit terakhir dari ID sebelumnya
-	seq, err := strconv.Atoi(seqStr)
-	if err != nil {
-		return "", fmt.Errorf("error converting sequence: %v", err)
-	}
-	sequence := seq + 1
-
-	// Format ID baru dengan urutan 3 digit
-	sequenceStr := fmt.Sprintf("%03d", sequence)
-	userID := fmt.Sprintf("USR%s%s", dateStr, sequenceStr)
-
-	return userID, nil
-}
-
 // CreateUser menangani pembuatan pengguna baru
 func CreateUser(c *fiber.Ctx) error {
 	// Buat instance baru untuk User
@@ -149,4 +115,38 @@ func GetAllUsers(c *fiber.Ctx) error {
 
 	// Mengembalikan response sukses dengan data pengguna
 	return helpers.JSONResponse(c, fiber.StatusOK, "Users retrieved successfully", users)
+}
+
+// Fungsi untuk generate ID user
+func generateUserID(db *gorm.DB) (string, error) {
+	// Ambil tanggal saat ini dalam format DDMMYYYY
+	now := time.Now()
+	dateStr := now.Format("02012006") // Format DDMMYYYY
+
+	var user models.User // Menggunakan model yang sudah ada
+
+	// Ambil urutan terbesar untuk tanggal tersebut
+	if err := db.Where("id LIKE ?", "USR"+dateStr+"%").Order("id DESC").First(&user).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			// Jika tidak ada user sebelumnya, urutan awal adalah 1
+			return fmt.Sprintf("USR%s001", dateStr), nil
+		} else {
+			return "", fmt.Errorf("error querying database: %v", err)
+		}
+	}
+
+	// Jika ditemukan user sebelumnya, ambil urutan terakhir dan tambah 1
+	lastID := user.ID                // Ambil ID user.ID
+	seqStr := lastID[len(lastID)-3:] // Ambil 3 digit terakhir dari ID sebelumnya
+	seq, err := strconv.Atoi(seqStr)
+	if err != nil {
+		return "", fmt.Errorf("error converting sequence: %v", err)
+	}
+	sequence := seq + 1
+
+	// Format ID baru dengan urutan 3 digit
+	sequenceStr := fmt.Sprintf("%03d", sequence)
+	userID := fmt.Sprintf("USR%s%s", dateStr, sequenceStr)
+
+	return userID, nil
 }

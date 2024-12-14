@@ -11,7 +11,7 @@ import (
 	jwt "github.com/golang-jwt/jwt/v5"
 	config "github.com/herumitra/ziidaapi/config"
 	helpers "github.com/herumitra/ziidaapi/helpers"
-	"github.com/herumitra/ziidaapi/models"
+	models "github.com/herumitra/ziidaapi/models"
 )
 
 func JWTMiddleware(c *fiber.Ctx) error {
