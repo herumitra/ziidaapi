@@ -59,6 +59,12 @@ func main() {
 	// API routes with JWT and role middleware applied
 	api_adm := app.Group("/api", middleware.JWTMiddleware, middleware.RoleMiddleware("administrator"))
 
+	// API routes with JWT and role middleware applied
+	api_adm_op := app.Group("/api", middleware.JWTMiddleware, middleware.RoleMiddleware("administrator", "operator"))
+
+	// API routes with JWT and role middleware applied
+	api_adm_op_cs_fn := app.Group("/api", middleware.JWTMiddleware, middleware.RoleMiddleware("administrator", "operator", "cashier", "finance"))
+
 	// Endpoints for User
 	api_adm.Post("/users", controllers.CreateUser)       //Create new User
 	api_adm.Get("/users", controllers.GetAllUsers)       //Menampilkan semua user
@@ -66,15 +72,26 @@ func main() {
 	api_adm.Put("/users/:id", controllers.UpdateUser)    //Update user berdasarkan ID
 	api_adm.Delete("/users/:id", controllers.DeleteUser) //Hapus user berdasarkan ID
 
-	// API routes with JWT and role middleware applied
-	api_adm_op := app.Group("/api", middleware.JWTMiddleware, middleware.RoleMiddleware("administrator", "operator"))
-
 	// Endpoints for Branch
 	api_adm_op.Post("/branches", controllers.CreateBranch)    //Create new Branch
 	api_adm_op.Get("/branches", controllers.GetAllBranch)     //Menampilkan semua branch
 	api_adm_op.Get("/branches/:id", controllers.GetBranch)    //Menampilkan branch berdasarkan ID
 	api_adm_op.Put("/branches/:id", controllers.UpdateBranch) //Update branch berdasarkan ID
 	api_adm.Delete("/branches/:id", controllers.DeleteBranch) //Hapus branch berdasarkan ID
+
+	// Endpoints for Unit
+	api_adm_op.Post("/units", controllers.CreateUnit)    //Create new Unit
+	api_adm_op.Get("/units", controllers.GetAllUnit)     //Menampilkan semua unit
+	api_adm_op.Get("/units/:id", controllers.GetUnit)    //Menampilkan unit berdasarkan ID
+	api_adm_op.Put("/units/:id", controllers.UpdateUnit) //Update unit berdasarkan ID
+	api_adm.Delete("/units/:id", controllers.DeleteUnit) //Hapus unit berdasarkan ID
+
+	// Endpoints for Product
+	api_adm_op.Post("/products", controllers.CreateProduct)       //Create new Product
+	api_adm_op_cs_fn.Get("/products", controllers.GetAllProduct)  //Menampilkan semua product
+	api_adm_op_cs_fn.Get("/products/:id", controllers.GetProduct) //Menampilkan product berdasarkan ID
+	api_adm_op.Put("/products/:id", controllers.UpdateProduct)    //Update product berdasarkan ID
+	api_adm.Delete("/products/:id", controllers.DeleteProduct)    //Hapus product berdasarkan ID
 
 	// Start app
 	app.Listen(":" + serverPort)

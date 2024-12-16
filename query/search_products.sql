@@ -6,6 +6,7 @@ RETURNS TABLE (
     product_id VARCHAR(19),
     product_name VARCHAR(100),
     sales_price BIGINT,
+    alternate_price BIGINT,
     stock BIGINT,
     unit_id VARCHAR(15),
     unit_name VARCHAR(100)
@@ -26,6 +27,7 @@ BEGIN
         p.id AS product_id,
         p.name AS product_name,
         p.sales_price AS sales_price,
+        p.alternate_price AS alternate_price,
         p.stock,
         p.unit_id AS unit_id,
         u.name AS unit_name

@@ -32,9 +32,9 @@ func ProductSeed() {
 	strDate := "2025-12-31 00:00:00"
 	t, _ := time.Parse(layoutDate, strDate)
 	product := []models.Product{
-		{ID: "PRD12122024001", Name: "Sanmol", Description: "Pracetamol", UnitId: "UNT12122024001", Stock: 100, ExpiredDate: t, SalesPrice: 10000, PurchasePrice: 5000, ProductCategoryId: 1, BranchID: "BRC11122024001"},
-		{ID: "PRD12122024002", Name: "Fenofibrate", Description: "Anti Kolesterol Tligiserida", UnitId: "UNT12122024001", Stock: 10, ExpiredDate: t, SalesPrice: 56900, PurchasePrice: 26000, ProductCategoryId: 1, BranchID: "BRC11122024001"},
-		{ID: "PRD12122024003", Name: "Simvastatin", Description: "Kolesterol Golongan Statin", UnitId: "UNT12122024001", Stock: 500, ExpiredDate: t, SalesPrice: 6500, PurchasePrice: 2000, ProductCategoryId: 1, BranchID: "BRC11122024001"},
+		{ID: "PRD12122024001", Name: "Sanmol", Description: "Pracetamol", UnitId: "UNT12122024001", Stock: 100, ExpiredDate: t, SalesPrice: 10000, AlternatePrice: 10000, PurchasePrice: 5000, ProductCategoryId: 1, BranchID: "BRC11122024001"},
+		{ID: "PRD12122024002", Name: "Fenofibrate", Description: "Anti Kolesterol Tligiserida", UnitId: "UNT12122024001", Stock: 10, ExpiredDate: t, SalesPrice: 56900, AlternatePrice: 56900, PurchasePrice: 26000, ProductCategoryId: 1, BranchID: "BRC11122024001"},
+		{ID: "PRD12122024003", Name: "Simvastatin", Description: "Kolesterol Golongan Statin", UnitId: "UNT12122024001", Stock: 500, ExpiredDate: t, SalesPrice: 6500, AlternatePrice: 6500, PurchasePrice: 2000, ProductCategoryId: 1, BranchID: "BRC11122024001"},
 	}
 	config.DB.Create(&product)
 }

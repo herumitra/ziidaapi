@@ -8,7 +8,7 @@ type Unit struct {
 	Name     string `gorm:"type:varchar(100);not null" json:"name" validate:"required"`
 	BranchID string `gorm:"type:varchar(15);not null" json:"branch_id" validate:"required"`
 
-	Branch Branch `gorm:"foreignKey:BranchID"`
+	// Branch Branch `gorm:"foreignKey:BranchID"`
 }
 
 // UnitConversion model
@@ -49,9 +49,9 @@ type Product struct {
 	ProductCategoryId uint      `gorm:"not null" json:"product_category_id" validate:"required"`
 	BranchID          string    `gorm:"type:varchar(15);not null" json:"branch_id" validate:"required"`
 
-	Branch          Branch          `gorm:"foreignKey:BranchID"`
-	ProductCategory ProductCategory `gorm:"foreignKey:ProductCategoryId"`
-	Unit            Unit            `gorm:"foreignKey:UnitId"`
+	// Branch          Branch          `gorm:"foreignKey:BranchID"`
+	// ProductCategory ProductCategory `gorm:"foreignKey:ProductCategoryId"`
+	// Unit            Unit            `gorm:"foreignKey:UnitId"`
 }
 
 // MemberCategory model

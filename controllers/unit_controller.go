@@ -64,23 +64,23 @@ func CreateUnit(c *fiber.Ctx) error {
 	// Panggil fungsi GetBranchID
 	branchID, err := services.GetBranchID(c)
 	if err != nil {
-		// Tangani error (misalnya kirim response dengan error)
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return helpers.JSONResponse(c, fiber.StatusUnauthorized, "Unauthorized", err)
 	}
 
-	// Buat instance baru untuk Unit
 	// Buat instance baru untuk Unit
 	var unit models.Unit
 
 	// Parse body request ke struct unit
 	if err := c.BodyParser(&unit); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid request body",
-		})
+		return helpers.JSONResponse(c, fiber.StatusBadRequest, "Invalid input", err)
 	}
 
+	unitID, err := generateUnitID(config.DB) // Pastikan generateUnitID menerima DB dan mengembalikan ID yang valid
+	if err != nil {
+		return helpers.JSONResponse(c, fiber.StatusInternalServerError, "Create unit failed", "Failed to generate unit ID")
+	}
+
+	unit.ID = unitID
 	// Tambahkan branchID ke unit (relasi ke cabang)
 	unit.BranchID = branchID
 
@@ -97,12 +97,66 @@ func CreateUnit(c *fiber.Ctx) error {
 
 // UpdateUnit update unit
 func UpdateUnit(c *fiber.Ctx) error {
-	return c.SendString("Hello, World!")
+	// Panggil fungsi GetBranchID
+	branchID, err := services.GetBranchID(c)
+	if err != nil {
+		// Tangani error (misalnya kirim response dengan error)
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	// Ambil unitID dari parameter
+	id := c.Params("id")
+	var unit models.Unit
+
+	// Cari unit berdasarkan ID dan branchID
+	if err := config.DB.Where("id = ? AND branch_id = ?", id, branchID).First(&unit).Error; err != nil {
+		return helpers.JSONResponse(c, fiber.StatusNotFound, "Unit not found", err)
+	}
+
+	// Parse body request ke struct unit
+	if err := c.BodyParser(&unit); err != nil {
+		return helpers.JSONResponse(c, fiber.StatusBadRequest, "Invalid input", err)
+	}
+
+	// Simpan unit ke database menggunakan GORM
+	if err := config.DB.Model(&unit).Updates(unit).Error; err != nil {
+		return helpers.JSONResponse(c, fiber.StatusInternalServerError, "Failed to update unit", err)
+	}
+
+	// Mengembalikan response data unit yang diupdate
+	return helpers.JSONResponse(c, fiber.StatusOK, "Unit created successfully", unit)
+
 }
 
 // DeleteUnit hapus unit
 func DeleteUnit(c *fiber.Ctx) error {
-	return c.SendString("Hello, World!")
+	// Panggil fungsi GetBranchID
+	branchID, err := services.GetBranchID(c)
+	if err != nil {
+		// Tangani error (misalnya kirim response dengan error)
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	// Ambil unitID dari parameter
+	id := c.Params("id")
+	var unit models.Unit
+
+	// Ambil data unit
+	if err := config.DB.Where("id = ? AND branch_id = ?", id, branchID).First(&unit).Error; err != nil {
+		return helpers.JSONResponse(c, fiber.StatusInternalServerError, "Failed to delete unit", err)
+	}
+
+	// Hapus unit
+	if err := config.DB.Where("id = ? AND branch_id = ?", id, branchID).Delete(&unit).Error; err != nil {
+		return helpers.JSONResponse(c, fiber.StatusInternalServerError, "Failed to delete unit", err)
+	}
+
+	// Berikan response sukses
+	return helpers.JSONResponse(c, fiber.StatusOK, "Unit deleted successfully", unit)
 }
 
 // generateUnitID generate id unit
