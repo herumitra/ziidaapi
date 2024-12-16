@@ -40,22 +40,74 @@ func CreateBranch(c *fiber.Ctx) error {
 
 // GetBranch menangani penampilan branch
 func GetBranch(c *fiber.Ctx) error {
-	return helpers.JSONResponse(c, fiber.StatusOK, "Branch found", nil)
+	id := c.Params("id")
+	var branch models.Branch
+
+	// Cari user berdasarkan ID
+	if err := config.DB.Where("id = ?", id).First(&branch).Error; err != nil {
+		return helpers.JSONResponse(c, fiber.StatusNotFound, "Branch not found", err)
+	}
+
+	// Mengembalikan response data branch
+	return helpers.JSONResponse(c, fiber.StatusOK, "Branch found", branch)
 }
 
 // UpdateBranch menangani pembaruan branch
 func UpdateBranch(c *fiber.Ctx) error {
-	return helpers.JSONResponse(c, fiber.StatusOK, "Branch updated successfully", nil)
+	id := c.Params("id")
+	var branch models.Branch
+
+	// Cari branch berdasarkan ID
+	if err := config.DB.Where("id = ?", id).First(&branch).Error; err != nil {
+		return helpers.JSONResponse(c, fiber.StatusNotFound, "Branch not found", err)
+	}
+
+	// Parsing data body langsung ke struct `branch`
+	// Namun, ini hanya akan mengupdate field-field tertentu.
+	if err := c.BodyParser(&branch); err != nil {
+		return helpers.JSONResponse(c, fiber.StatusBadRequest, "Invalid input", err)
+	}
+
+	// Pastikan hanya field yang ingin diperbarui yang diubah.
+	// Gunakan `Model` untuk menghindari overwrite seluruh object.
+	if err := config.DB.Model(&branch).Updates(branch).Error; err != nil {
+		return helpers.JSONResponse(c, fiber.StatusInternalServerError, "Failed to update branch", err)
+	}
+
+	// Mengembalikan response sukses dengan data branch yang diperbarui
+	return helpers.JSONResponse(c, fiber.StatusOK, "Branch updated successfully", branch)
 }
 
 // DeleteBranch menangani penghapusan branch
 func DeleteBranch(c *fiber.Ctx) error {
-	return helpers.JSONResponse(c, fiber.StatusOK, "Branch deleted successfully", nil)
+	id := c.Params("id")
+	var branch models.Branch
+
+	// Cari branch berdasarkan ID
+	if err := config.DB.Where("id = ?", id).First(&branch).Error; err != nil {
+		return helpers.JSONResponse(c, fiber.StatusNotFound, "branch not found", err)
+	}
+
+	// Hapus branch
+	if err := config.DB.Where("id = ?", id).Delete(&branch).Error; err != nil {
+		return helpers.JSONResponse(c, fiber.StatusInternalServerError, "Failed to delete branch", err)
+	}
+
+	// Mengembalikan response sukses
+	return helpers.JSONResponse(c, fiber.StatusOK, "Branch deleted successfully", branch)
 }
 
 // GetAllBranch menangani penampilan semua branch
 func GetAllBranch(c *fiber.Ctx) error {
-	return helpers.JSONResponse(c, fiber.StatusOK, "Branches retrieved successfully", nil)
+	var branches []models.Branch
+
+	// Mengambil semua data branch dari database
+	if err := config.DB.Find(&branches).Error; err != nil {
+		return helpers.JSONResponse(c, fiber.StatusInternalServerError, "Get branches failed", "Failed to fetch branches")
+	}
+
+	// Mengembalikan response data branch
+	return helpers.JSONResponse(c, fiber.StatusOK, "Branches retrieved successfully", branches)
 }
 
 // Fungsi untuk generate ID user

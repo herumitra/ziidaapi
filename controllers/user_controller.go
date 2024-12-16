@@ -56,17 +56,19 @@ func UpdateUser(c *fiber.Ctx) error {
 	var user models.User
 
 	// Cari user berdasarkan ID
-	if err := config.DB.First(&user, id).Error; err != nil {
+	if err := config.DB.Where("id = ?", id).First(&user).Error; err != nil {
 		return helpers.JSONResponse(c, fiber.StatusNotFound, "User not found", err)
 	}
 
-	// Parsing request body untuk update data
+	// Parsing data body langsung ke struct `user`
+	// Namun, ini hanya akan mengupdate field-field tertentu.
 	if err := c.BodyParser(&user); err != nil {
 		return helpers.JSONResponse(c, fiber.StatusBadRequest, "Invalid input", err)
 	}
 
-	// Update data user
-	if err := config.DB.Save(&user).Error; err != nil {
+	// Pastikan hanya field yang ingin diperbarui yang diubah.
+	// Gunakan `Model` untuk menghindari overwrite seluruh object.
+	if err := config.DB.Model(&user).Updates(user).Error; err != nil {
 		return helpers.JSONResponse(c, fiber.StatusInternalServerError, "Failed to update user", err)
 	}
 

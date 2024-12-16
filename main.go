@@ -66,11 +66,22 @@ func main() {
 	api_role.Put("/users/:id", controllers.UpdateUser)    //Update user berdasarkan ID
 	api_role.Delete("/users/:id", controllers.DeleteUser) //Hapus user berdasarkan ID
 
+	// API routes with JWT and role middleware applied
+	api_adm_op := app.Group("/api", middleware.JWTMiddleware, middleware.RoleMiddleware("administrator", "operator"))
+
 	// Endpoints for Branch
-	api_role.Post("/branches", controllers.CreateBranch) //Create new Branch
+	api_adm_op.Post("/branches", controllers.CreateBranch)     //Create new Branch
+	api_adm_op.Get("/branches", controllers.GetAllBranch)      //Menampilkan semua branch
+	api_adm_op.Get("/branches/:id", controllers.GetBranch)     //Menampilkan branch berdasarkan ID
+	api_adm_op.Put("/branches/:id", controllers.UpdateBranch)  //Update branch berdasarkan ID
+	api_role.Delete("/branches/:id", controllers.DeleteBranch) //Hapus branch berdasarkan ID
 
 	// Start app
 	app.Listen(":" + serverPort)
 
 	// app.Get("/operational", JWTMiddleware, RoleMiddleware(models.Operator), OperationalHandler)
+	// Operator      UserRole = "operator"
+	// Cashier       UserRole = "cashier"
+	// Finance       UserRole = "finance"
+	// Administrator UserRole = "administrator"
 }

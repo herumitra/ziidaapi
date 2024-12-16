@@ -1,3 +1,11 @@
+CREATE ROLE ziida WITH LOGIN PASSWORD 'S14n4kC3rd4s';
+ALTER ROLE ziida WITH SUPERUSER;
+ALTER ROLE ziida WITH CREATEDB;
+ALTER ROLE ziida WITH CREATEROLE;
+CREATE DATABASE ziida;
+
+--psql -U ziida -W postgres
+
 CREATE TYPE user_role AS ENUM ('operator', 'cashier', 'finance', 'administrator');
 CREATE TYPE data_status AS ENUM ('active', 'inactive');
 CREATE TYPE journal_method AS ENUM ('automatic', 'manual');
