@@ -57,24 +57,24 @@ func main() {
 	api.Post("/set_branch", controllers.SetBranch)
 
 	// API routes with JWT and role middleware applied
-	api_role := app.Group("/api", middleware.JWTMiddleware, middleware.RoleMiddleware("administrator"))
+	api_adm := app.Group("/api", middleware.JWTMiddleware, middleware.RoleMiddleware("administrator"))
 
 	// Endpoints for User
-	api_role.Post("/users", controllers.CreateUser)       //Create new User
-	api_role.Get("/users", controllers.GetAllUsers)       //Menampilkan semua user
-	api_role.Get("/users/:id", controllers.GetUser)       //Menampilkan user berdasarkan ID
-	api_role.Put("/users/:id", controllers.UpdateUser)    //Update user berdasarkan ID
-	api_role.Delete("/users/:id", controllers.DeleteUser) //Hapus user berdasarkan ID
+	api_adm.Post("/users", controllers.CreateUser)       //Create new User
+	api_adm.Get("/users", controllers.GetAllUsers)       //Menampilkan semua user
+	api_adm.Get("/users/:id", controllers.GetUser)       //Menampilkan user berdasarkan ID
+	api_adm.Put("/users/:id", controllers.UpdateUser)    //Update user berdasarkan ID
+	api_adm.Delete("/users/:id", controllers.DeleteUser) //Hapus user berdasarkan ID
 
 	// API routes with JWT and role middleware applied
 	api_adm_op := app.Group("/api", middleware.JWTMiddleware, middleware.RoleMiddleware("administrator", "operator"))
 
 	// Endpoints for Branch
-	api_adm_op.Post("/branches", controllers.CreateBranch)     //Create new Branch
-	api_adm_op.Get("/branches", controllers.GetAllBranch)      //Menampilkan semua branch
-	api_adm_op.Get("/branches/:id", controllers.GetBranch)     //Menampilkan branch berdasarkan ID
-	api_adm_op.Put("/branches/:id", controllers.UpdateBranch)  //Update branch berdasarkan ID
-	api_role.Delete("/branches/:id", controllers.DeleteBranch) //Hapus branch berdasarkan ID
+	api_adm_op.Post("/branches", controllers.CreateBranch)    //Create new Branch
+	api_adm_op.Get("/branches", controllers.GetAllBranch)     //Menampilkan semua branch
+	api_adm_op.Get("/branches/:id", controllers.GetBranch)    //Menampilkan branch berdasarkan ID
+	api_adm_op.Put("/branches/:id", controllers.UpdateBranch) //Update branch berdasarkan ID
+	api_adm.Delete("/branches/:id", controllers.DeleteBranch) //Hapus branch berdasarkan ID
 
 	// Start app
 	app.Listen(":" + serverPort)

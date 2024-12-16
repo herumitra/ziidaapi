@@ -44,6 +44,7 @@ type Product struct {
 	Stock             int       `gorm:"type:int;not null;default:0" json:"stock"`
 	ExpiredDate       time.Time `gorm:"not null" json:"expired_date" validate:"required"`
 	SalesPrice        int       `gorm:"type:int;not null;default:0" json:"sales_price" validate:"required"`
+	AlternatePrice    int       `gorm:"type:int;not null;default:0" json:"alternate_price" validate:"required"`
 	PurchasePrice     int       `gorm:"type:int;not null;default:0" json:"purchase_price" validate:"required"`
 	ProductCategoryId uint      `gorm:"not null" json:"product_category_id" validate:"required"`
 	BranchID          string    `gorm:"type:varchar(15);not null" json:"branch_id" validate:"required"`

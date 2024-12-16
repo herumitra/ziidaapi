@@ -128,7 +128,7 @@ func generateBranchID(db *gorm.DB) (string, error) {
 		}
 	}
 
-	// Jika ditemukan user sebelumnya, ambil urutan terakhir dan tambah 1
+	// Jika ditemukan branch sebelumnya, ambil urutan terakhir dan tambah 1
 	lastID := branch.ID              // Ambil ID branch.ID
 	seqStr := lastID[len(lastID)-3:] // Ambil 3 digit terakhir dari ID sebelumnya
 	seq, err := strconv.Atoi(seqStr)

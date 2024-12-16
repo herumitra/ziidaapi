@@ -1,6 +1,10 @@
 package controllers
 
 import (
+	fmt "fmt"
+	strconv "strconv"
+	time "time"
+
 	fiber "github.com/gofiber/fiber/v2"
 	config "github.com/herumitra/ziidaapi/config"
 	helpers "github.com/herumitra/ziidaapi/helpers"
@@ -57,7 +61,38 @@ func GetUnit(c *fiber.Ctx) error {
 
 // CreateUnit buat unit
 func CreateUnit(c *fiber.Ctx) error {
-	return c.SendString("Hello, World!")
+	// Panggil fungsi GetBranchID
+	branchID, err := services.GetBranchID(c)
+	if err != nil {
+		// Tangani error (misalnya kirim response dengan error)
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	// Buat instance baru untuk Unit
+	// Buat instance baru untuk Unit
+	var unit models.Unit
+
+	// Parse body request ke struct unit
+	if err := c.BodyParser(&unit); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid request body",
+		})
+	}
+
+	// Tambahkan branchID ke unit (relasi ke cabang)
+	unit.BranchID = branchID
+
+	// Simpan unit ke database menggunakan GORM
+	if err := config.DB.Create(&unit).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to create unit",
+		})
+	}
+
+	// Berikan response sukses
+	return helpers.JSONResponse(c, fiber.StatusOK, "Unit created successfully", unit)
 }
 
 // UpdateUnit update unit
@@ -72,5 +107,34 @@ func DeleteUnit(c *fiber.Ctx) error {
 
 // generateUnitID generate id unit
 func generateUnitID(db *gorm.DB) (string, error) {
-	return "", nil
+	// Ambil tanggal saat ini dalam format DDMMYYYY
+	now := time.Now()
+	dateStr := now.Format("02012006") // Format DDMMYYYY
+
+	var unit models.Unit // Menggunakan model yang sudah ada
+
+	// Ambil urutan terbesar untuk tanggal tersebut
+	if err := db.Where("id LIKE ?", "UNT"+dateStr+"%").Order("id DESC").First(&unit).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			// Jika tidak ada user sebelumnya, urutan awal adalah 1
+			return fmt.Sprintf("UNT%s001", dateStr), nil
+		} else {
+			return "", fmt.Errorf("error querying database: %v", err)
+		}
+	}
+
+	// Jika ditemukan unit sebelumnya, ambil urutan terakhir dan tambah 1
+	lastID := unit.ID                // Ambil ID unit.ID
+	seqStr := lastID[len(lastID)-3:] // Ambil 3 digit terakhir dari ID sebelumnya
+	seq, err := strconv.Atoi(seqStr)
+	if err != nil {
+		return "", fmt.Errorf("error converting sequence: %v", err)
+	}
+	sequence := seq + 1
+
+	// Format ID baru dengan urutan 3 digit
+	sequenceStr := fmt.Sprintf("%03d", sequence)
+	unitID := fmt.Sprintf("UNT%s%s", dateStr, sequenceStr)
+
+	return unitID, nil
 }
