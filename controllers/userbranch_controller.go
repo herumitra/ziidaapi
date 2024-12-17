@@ -27,27 +27,34 @@ func CreateUserBranch(c *fiber.Ctx) error {
 
 // GetUserBranch menangani penampilan userbranch
 func GetUserBranch(c *fiber.Ctx) error {
-	id := c.Params("id")
-	var userbranch models.UserBranch
+	userID := c.Params("userid")
+	branch_id, _ := services.GetBranchID(c)
+	var userBranchDetails []models.UserBranchDetail
 
-	// Cari user berdasarkan ID
-	if err := config.DB.Where("id = ?", id).First(&userbranch).Error; err != nil {
-		return helpers.JSONResponse(c, fiber.StatusNotFound, "UserBranch not found", err)
+	// Melakukan LEFT OUTER JOIN menggunakan GORM
+	if err := config.DB.
+		Table("user_branches").
+		Select("user_branches.user_id, users.name AS user_name, user_branches.branch_id, branches.name AS branch_name").
+		Joins("LEFT JOIN users ON users.id = user_branches.user_id").
+		Joins("LEFT JOIN branches ON branches.id = user_branches.branch_id").
+		Where("user_branches.branch_id = ? AND user_branches.user_id = ?", branch_id, userID).
+		Scan(&userBranchDetails).Error; err != nil {
+		return helpers.JSONResponse(c, fiber.StatusInternalServerError, "Get userbranches failed", "Failed to fetch user branches with details")
 	}
 
 	// Mengembalikan response data userbranch
-	return helpers.JSONResponse(c, fiber.StatusOK, "UserBranch found", userbranch)
+	return helpers.JSONResponse(c, fiber.StatusOK, "UserBranch found", userBranchDetails)
 }
 
 // UpdateUserBranch menangani pembaruan userbranch
 func UpdateUserBranch(c *fiber.Ctx) error {
-	user_id := c.Params("user_id")
-	branch_id := c.Params("branch_id")
+	userID := c.Params("userid")
+	branchID := c.Params("branchid")
 
 	var userbranch models.UserBranch
 
 	// Cari userbranch berdasarkan ID
-	if err := config.DB.Where("user_id	= ? AND branch_id = ?", user_id, branch_id).First(&userbranch).Error; err != nil {
+	if err := config.DB.Where("user_id	= ? AND branch_id = ?", userID, branchID).First(&userbranch).Error; err != nil {
 		return helpers.JSONResponse(c, fiber.StatusNotFound, "UserBranch not found", err)
 	}
 
@@ -59,7 +66,7 @@ func UpdateUserBranch(c *fiber.Ctx) error {
 
 	// Pastikan hanya field yang ingin diperbarui yang diubah.
 	// Gunakan `Model` untuk menghindari overwrite seluruh object.
-	if err := config.DB.Model(&userbranch).Where("user_id	= ? AND branch_id = ?", user_id, branch_id).Updates(userbranch).Error; err != nil {
+	if err := config.DB.Model(&userbranch).Where("user_id	= ? AND branch_id = ?", userID, branchID).Updates(userbranch).Error; err != nil {
 		return helpers.JSONResponse(c, fiber.StatusInternalServerError, "Failed to update userbranch", err)
 	}
 
@@ -69,8 +76,8 @@ func UpdateUserBranch(c *fiber.Ctx) error {
 
 // DeleteUserBranch menangani penghapusan userbranch
 func DeleteUserBranch(c *fiber.Ctx) error {
-	user_id := c.Params("user_id")
-	branch_id := c.Params("branch_id")
+	user_id := c.Params("userid")
+	branch_id := c.Params("branchid")
 	var userbranch models.UserBranch
 
 	// Cari userbranch berdasarkan ID

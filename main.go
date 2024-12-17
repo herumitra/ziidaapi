@@ -80,11 +80,11 @@ func main() {
 	api_adm.Delete("/branches/:id", controllers.DeleteBranch) //Hapus branch berdasarkan ID
 
 	// Endpoints for Unit
-	api_adm_op.Post("/units", controllers.CreateUnit)    //Create new Unit
-	api_adm_op.Get("/units", controllers.GetAllUnit)     //Menampilkan semua unit
-	api_adm_op.Get("/units/:id", controllers.GetUnit)    //Menampilkan unit berdasarkan ID
-	api_adm_op.Put("/units/:id", controllers.UpdateUnit) //Update unit berdasarkan ID
-	api_adm.Delete("/units/:id", controllers.DeleteUnit) //Hapus unit berdasarkan ID
+	api_adm_op.Post("/units", controllers.CreateUnit)       //Create new Unit
+	api_adm_op_cs_fn.Get("/units", controllers.GetAllUnit)  //Menampilkan semua unit
+	api_adm_op_cs_fn.Get("/units/:id", controllers.GetUnit) //Menampilkan unit berdasarkan ID
+	api_adm_op.Put("/units/:id", controllers.UpdateUnit)    //Update unit berdasarkan ID
+	api_adm.Delete("/units/:id", controllers.DeleteUnit)    //Hapus unit berdasarkan ID
 
 	// Endpoints for Product
 	api_adm_op.Post("/products", controllers.CreateProduct)       //Create new Product
@@ -94,18 +94,12 @@ func main() {
 	api_adm.Delete("/products/:id", controllers.DeleteProduct)    //Hapus product berdasarkan ID
 
 	// Endpoints for UserBranch
-	api_adm.Post("/user_branches/:user_id/:branch_id", controllers.CreateUserBranch) //Create new UserBranch
-	api_adm.Get("/user_branches/:user_id/:branch_id", controllers.GetAllUserBranch)  //Menampilkan semua user_branch
-	api_adm.Get("/user_branches/:id", controllers.GetUserBranch)                     //Menampilkan user_branch berdasarkan ID
-	api_adm.Put("/user_branches/:id", controllers.UpdateUserBranch)                  //Update user_branch berdasarkan ID
-	api_adm.Delete("/user_branches/:id", controllers.DeleteUserBranch)               //Hapus user_branch berdasarkan ID
+	api_adm.Post("/user_branches", controllers.CreateUserBranch)                     //Create new UserBranch
+	api_adm_op_cs_fn.Get("/user_branches", controllers.GetAllUserBranch)             //Menampilkan semua user_branch
+	api_adm_op_cs_fn.Get("/user_branches/:userid", controllers.GetUserBranch)        //Menampilkan user_branch berdasarkan ID
+	api_adm.Put("/user_branches/:userid/:branchid", controllers.UpdateUserBranch)    //Update user_branch berdasarkan ID
+	api_adm.Delete("/user_branches/:userid/:branchid", controllers.DeleteUserBranch) //Hapus user_branch berdasarkan ID
 
 	// Start app
 	app.Listen(":" + serverPort)
-
-	// app.Get("/operational", JWTMiddleware, RoleMiddleware(models.Operator), OperationalHandler)
-	// Operator      UserRole = "operator"
-	// Cashier       UserRole = "cashier"
-	// Finance       UserRole = "finance"
-	// Administrator UserRole = "administrator"
 }

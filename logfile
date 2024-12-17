@@ -192,3 +192,7 @@
 2024-12-17 11:26:43.539 WIB [2988] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
 2024-12-17 11:26:43.552 WIB [2989] LOG:  database system was shut down at 2024-12-17 09:41:51 WIB
 2024-12-17 11:26:43.567 WIB [2988] LOG:  database system is ready to accept connections
+2024-12-17 12:46:57.212 WIB [2988] LOG:  received smart shutdown request
+2024-12-17 12:46:57.214 WIB [2988] LOG:  background worker "logical replication launcher" (PID 2995) exited with exit code 1
+2024-12-17 12:46:57.214 WIB [2990] LOG:  shutting down
+2024-12-17 12:46:57.220 WIB [2988] LOG:  database system is shut down
