@@ -93,6 +93,13 @@ func main() {
 	api_adm_op.Put("/products/:id", controllers.UpdateProduct)    //Update product berdasarkan ID
 	api_adm.Delete("/products/:id", controllers.DeleteProduct)    //Hapus product berdasarkan ID
 
+	// Endpoints for UserBranch
+	api_adm.Post("/user_branches/:user_id/:branch_id", controllers.CreateUserBranch) //Create new UserBranch
+	api_adm.Get("/user_branches/:user_id/:branch_id", controllers.GetAllUserBranch)  //Menampilkan semua user_branch
+	api_adm.Get("/user_branches/:id", controllers.GetUserBranch)                     //Menampilkan user_branch berdasarkan ID
+	api_adm.Put("/user_branches/:id", controllers.UpdateUserBranch)                  //Update user_branch berdasarkan ID
+	api_adm.Delete("/user_branches/:id", controllers.DeleteUserBranch)               //Hapus user_branch berdasarkan ID
+
 	// Start app
 	app.Listen(":" + serverPort)
 

@@ -13,3 +13,10 @@ type UserBranch struct {
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
+
+type UserBranchDetail struct {
+	UserID     string `json:"user_id"`
+	UserName   string `json:"user_name"`
+	BranchID   string `json:"branch_id"`
+	BranchName string `json:"branch_name"`
+}

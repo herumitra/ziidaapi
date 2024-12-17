@@ -186,3 +186,9 @@
 2024-12-16 16:29:51.563 WIB [4400] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
 2024-12-16 16:29:51.577 WIB [4401] LOG:  database system was shut down at 2024-12-15 06:39:13 WIB
 2024-12-16 16:29:51.590 WIB [4400] LOG:  database system is ready to accept connections
+2024-12-17 11:26:43.537 WIB [2988] LOG:  starting PostgreSQL 14.15 (Homebrew) on x86_64-apple-darwin23.6.0, compiled by Apple clang version 16.0.0 (clang-1600.0.26.4), 64-bit
+2024-12-17 11:26:43.539 WIB [2988] LOG:  listening on IPv6 address "::1", port 5432
+2024-12-17 11:26:43.539 WIB [2988] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2024-12-17 11:26:43.539 WIB [2988] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2024-12-17 11:26:43.552 WIB [2989] LOG:  database system was shut down at 2024-12-17 09:41:51 WIB
+2024-12-17 11:26:43.567 WIB [2988] LOG:  database system is ready to accept connections
