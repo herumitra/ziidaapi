@@ -37,6 +37,7 @@ func main() {
 		seeders.UnitConversionSeed()
 		seeders.ProductCategorySeed()
 		seeders.ProductSeed()
+		seeders.MemberCategorySeed()
 		os.Exit(0) // Exit after seeding
 	}
 
@@ -93,12 +94,40 @@ func main() {
 	api_adm_op.Put("/products/:id", controllers.UpdateProduct)    //Update product berdasarkan ID
 	api_adm.Delete("/products/:id", controllers.DeleteProduct)    //Hapus product berdasarkan ID
 
+	// Endpoints for ProductCategory
+	api_adm_op.Post("/product_categories", controllers.CreateProductCategory)       //Create new ProductCategory
+	api_adm_op_cs_fn.Get("/product_categories", controllers.GetAllProductCategory)  //Menampilkan semua product_category
+	api_adm_op_cs_fn.Get("/product_categories/:id", controllers.GetProductCategory) //Menampilkan product_category berdasarkan ID
+	api_adm_op.Put("/product_categories/:id", controllers.UpdateProductCategory)    //Update product_category berdasarkan ID
+	api_adm.Delete("/product_categories/:id", controllers.DeleteProductCategory)    //Hapus product_category berdasarkan ID
+
 	// Endpoints for UserBranch
 	api_adm.Post("/user_branches", controllers.CreateUserBranch)                     //Create new UserBranch
 	api_adm_op_cs_fn.Get("/user_branches", controllers.GetAllUserBranch)             //Menampilkan semua user_branch
 	api_adm_op_cs_fn.Get("/user_branches/:userid", controllers.GetUserBranch)        //Menampilkan user_branch berdasarkan ID
 	api_adm.Put("/user_branches/:userid/:branchid", controllers.UpdateUserBranch)    //Update user_branch berdasarkan ID
 	api_adm.Delete("/user_branches/:userid/:branchid", controllers.DeleteUserBranch) //Hapus user_branch berdasarkan ID
+
+	// Endpoints for MemberCategory
+	api_adm_op.Post("/member_categories", controllers.CreateMemberCategory)       //Create new MemberCategory
+	api_adm_op_cs_fn.Get("/member_categories", controllers.GetAllMemberCategory)  //Menampilkan semua member_category
+	api_adm_op_cs_fn.Get("/member_categories/:id", controllers.GetMemberCategory) //Menampilkan member_category berdasarkan ID
+	api_adm_op.Put("/member_categories/:id", controllers.UpdateMemberCategory)    //Update member_category berdasarkan ID
+	api_adm_op.Delete("/member_categories/:id", controllers.DeleteMemberCategory) //Hapus member_category berdasarkan ID
+
+	// Endpoints for Member
+	api_adm_op.Post("/members", controllers.CreateMember)       //Create new Member
+	api_adm_op_cs_fn.Get("/members", controllers.GetAllMember)  //Menampilkan semua member
+	api_adm_op_cs_fn.Get("/members/:id", controllers.GetMember) //Menampilkan member berdasarkan ID
+	api_adm_op.Put("/members/:id", controllers.UpdateMember)    //Update member berdasarkan ID
+	api_adm_op.Delete("/members/:id", controllers.DeleteMember) //Hapus member berdasarkan ID
+
+	// Endpoints for SupplierCategory
+	api_adm_op.Post("/supplier_categories", controllers.CreateSupplierCategory)       //Create new SupplierCategory
+	api_adm_op_cs_fn.Get("/supplier_categories", controllers.GetAllSupplierCategory)  //Menampilkan semua supplier_category
+	api_adm_op_cs_fn.Get("/supplier_categories/:id", controllers.GetSupplierCategory) //Menampilkan supplier_category berdasarkan ID
+	api_adm_op.Put("/supplier_categories/:id", controllers.UpdateSupplierCategory)    //Update supplier_category berdasarkan ID
+	api_adm_op.Delete("/supplier_categories/:id", controllers.DeleteSupplierCategory) //Hapus supplier_category berdasarkan ID
 
 	// Start app
 	app.Listen(":" + serverPort)

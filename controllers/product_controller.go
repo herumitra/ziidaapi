@@ -171,7 +171,7 @@ func generateProductID(db *gorm.DB) (string, error) {
 	if err := db.Where("id LIKE ?", "PRD"+dateStr+"%").Order("id DESC").First(&product).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			// Jika tidak ada user sebelumnya, urutan awal adalah 1
-			return fmt.Sprintf("PRD%s001", dateStr), nil
+			return fmt.Sprintf("PRD%s00001", dateStr), nil
 		} else {
 			return "", fmt.Errorf("error querying database: %v", err)
 		}
@@ -179,15 +179,15 @@ func generateProductID(db *gorm.DB) (string, error) {
 
 	// Jika ditemukan product sebelumnya, ambil urutan terakhir dan tambah 1
 	lastID := product.ID             // Ambil ID product.ID
-	seqStr := lastID[len(lastID)-3:] // Ambil 3 digit terakhir dari ID sebelumnya
+	seqStr := lastID[len(lastID)-5:] // Ambil 5 digit terakhir dari ID sebelumnya
 	seq, err := strconv.Atoi(seqStr)
 	if err != nil {
 		return "", fmt.Errorf("error converting sequence: %v", err)
 	}
 	sequence := seq + 1
 
-	// Format ID baru dengan urutan 3 digit
-	sequenceStr := fmt.Sprintf("%03d", sequence)
+	// Format ID baru dengan urutan 5 digit
+	sequenceStr := fmt.Sprintf("%05d", sequence)
 	productID := fmt.Sprintf("PRD%s%s", dateStr, sequenceStr)
 
 	return productID, nil
