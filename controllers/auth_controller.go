@@ -223,6 +223,7 @@ func generateBranchJWTWithRole(userID string, branchID string, userRole string) 
 func GetProfile(c *fiber.Ctx) error {
 	branchID, _ := services.GetBranchID(c)
 	userID, _ := services.GetUserID(c)
+	userRole, _ := services.GetUserRole(c)
 	var profilStruct models.ProfileStruct
 
 	// Melakukan LEFT OUTER JOIN menggunakan GORM
@@ -237,5 +238,5 @@ func GetProfile(c *fiber.Ctx) error {
 	}
 
 	// Mengembalikan response data branch
-	return helpers.JSONResponse(c, fiber.StatusOK, "Profile", profilStruct)
+	return helpers.JSONResponse(c, fiber.StatusOK, "Otoritas : "+userRole, profilStruct)
 }

@@ -130,6 +130,20 @@ func main() {
 	api_adm_op.Put("/supplier_categories/:id", controllers.UpdateSupplierCategory)    //Update supplier_category berdasarkan ID
 	api_adm_op.Delete("/supplier_categories/:id", controllers.DeleteSupplierCategory) //Hapus supplier_category berdasarkan ID
 
+	// Endpoints for Supplier
+	api_adm_op.Post("/suppliers", controllers.CreateSupplier)       //Create new Supplier
+	api_adm_op_cs_fn.Get("/suppliers", controllers.GetAllSupplier)  //Menampilkan semua supplier
+	api_adm_op_cs_fn.Get("/suppliers/:id", controllers.GetSupplier) //Menampilkan supplier berdasarkan ID
+	api_adm_op.Put("/suppliers/:id", controllers.UpdateSupplier)    //Update supplier berdasarkan ID
+	api_adm_op.Delete("/suppliers/:id", controllers.DeleteSupplier) //Hapus supplier berdasarkan ID
+
+	// Endpoints for SupplierProduct
+	api_adm_op.Post("/supplier_products", controllers.CreateSupplierProduct)       //Create new SupplierProduct
+	api_adm_op_cs_fn.Get("/supplier_products", controllers.GetAllSupplierProduct)  //Menampilkan semua supplier_product
+	api_adm_op_cs_fn.Get("/supplier_products/:id", controllers.GetSupplierProduct) //Menampilkan supplier_product berdasarkan ID
+	api_adm_op.Put("/supplier_products/:id", controllers.UpdateSupplierProduct)    //Update supplier_product berdasarkan ID
+	api_adm_op.Delete("/supplier_products/:id", controllers.DeleteSupplierProduct) //Hapus supplier_product berdasarkan ID
+
 	// Start app
 	app.Listen(":" + serverPort)
 }

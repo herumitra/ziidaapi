@@ -26,6 +26,21 @@ type UnitConversion struct {
 	// UnitFinal Unit `gorm:"foreignKey:UnitFinalId"`
 }
 
+// UnitConversionDetail model
+type UnitConversionDetail struct {
+	ID            string `gorm:"type:varchar(15);primaryKey" json:"id" validate:"required"`
+	UnitInitId    string `gorm:"type:varchar(15);not null" json:"unit_init_id" validate:"required"`
+	UnitInitName  string `gorm:"type:varchar(100);not null" json:"unit_init_name" validate:"required"`
+	UnitFinalId   string `gorm:"type:varchar(15);not null" json:"unit_final_id" validate:"required"`
+	UnitFinalName string `gorm:"type:varchar(100);not null" json:"unit_final_name" validate:"required"`
+	ValueConv     int    `gorm:"type:int;not null;default:0" json:"value_conv" validate:"required"`
+	BranchID      string `gorm:"type:varchar(15);not null" json:"branch_id" validate:"required"`
+
+	// Branch Branch `gorm:"foreignKey:BranchID"`
+	// UnitInit  Unit `gorm:"foreignKey:UnitInitId"`
+	// UnitFinal Unit `gorm:"foreignKey:UnitFinalId"`
+}
+
 // ProductCategory model
 type ProductCategory struct {
 	ID       uint   `gorm:"primaryKey;autoIncrement" json:"id"`
