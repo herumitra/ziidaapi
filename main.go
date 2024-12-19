@@ -50,6 +50,7 @@ func main() {
 	// Endpoints for Auth
 	app.Post("/login", controllers.Login)
 	app.Post("/logout", controllers.Logout)
+	app.Get("/profile", middleware.JWTMiddleware, controllers.GetProfile)
 
 	// API routes with JWT middleware applied
 	api := app.Group("/api", middleware.JWTMiddleware) // Perbaikan: panggil middleware tanpa tanda kurung

@@ -52,7 +52,7 @@ func MemberCategorySeed() {
 	memberCategory := []models.MemberCategory{
 		{ID: 1, Name: "Reguler", BranchID: "BRC11122024001"},
 		{ID: 2, Name: "Silver", BranchID: "BRC11122024001"},
-		{ID: 2, Name: "Gold", BranchID: "BRC11122024001"},
+		{ID: 3, Name: "Gold", BranchID: "BRC11122024001"},
 	}
 	config.DB.Create(&memberCategory)
 }

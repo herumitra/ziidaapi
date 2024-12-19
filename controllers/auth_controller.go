@@ -13,6 +13,7 @@ import (
 	config "github.com/herumitra/ziidaapi/config"
 	helpers "github.com/herumitra/ziidaapi/helpers"
 	models "github.com/herumitra/ziidaapi/models"
+	services "github.com/herumitra/ziidaapi/services"
 	bcrypt "golang.org/x/crypto/bcrypt"
 )
 
@@ -216,4 +217,25 @@ func generateBranchJWTWithRole(userID string, branchID string, userRole string) 
 	// Gunakan secret key untuk menandatangani token
 	secretKey := []byte(os.Getenv("JWT_SECRET"))
 	return token.SignedString(secretKey)
+}
+
+// GetProfile menangani penampilan branch sesuai branch_id dari tokenJWT
+func GetProfile(c *fiber.Ctx) error {
+	branchID, _ := services.GetBranchID(c)
+	userID, _ := services.GetUserID(c)
+	var profilStruct models.ProfileStruct
+
+	// Melakukan LEFT OUTER JOIN menggunakan GORM
+	if err := config.DB.
+		Table("user_branches").
+		Select("user_branches.user_id AS user_id, users.name AS profile_name, user_branches.branch_id AS branch_id, branches.branch_name AS branch_name, branches.address, branches.phone, branches.email, branches.sia_id, branches.sia_name, branches.psa_id, branches.psa_name, branches.sipa, branches.sipa_name, branches.aping_id, branches.aping_name, branches.bank_name, branches.account_name, branches.account_number, branches.tax_percentage, branches.journal_method").
+		Joins("LEFT JOIN users ON users.id = user_branches.user_id").
+		Joins("LEFT JOIN branches ON branches.id = user_branches.branch_id").
+		Where("user_branches.branch_id = ? AND user_branches.user_id = ?", branchID, userID).
+		Scan(&profilStruct).Error; err != nil {
+		return helpers.JSONResponse(c, fiber.StatusInternalServerError, "Get userbranches failed", "Failed to fetch user branches with details")
+	}
+
+	// Mengembalikan response data branch
+	return helpers.JSONResponse(c, fiber.StatusOK, "Profile", profilStruct)
 }
