@@ -25,7 +25,7 @@ REDIS_PORT=6379
 SERVER_PORT=4001
 ```
 
->Jalankan perintah di bawah ini dalam query database `PostgreSQL`:S
+>Jalankan perintah di bawah ini dalam query database `PostgreSQL`:
 ```bash
 CREATE TYPE user_role AS ENUM ('operator', 'cashier', 'finance', 'administrator');
 CREATE TYPE data_status AS ENUM ('active', 'inactive');
