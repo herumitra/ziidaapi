@@ -6,7 +6,7 @@ import "github.com/gofiber/fiber/v2"
 type Response struct {
 	Status  string      `json:"status"`
 	Message string      `json:"message"`
-	Results interface{} `json:"results"`
+	Data    interface{} `json:"data"`
 }
 
 // ErrorResponse represents the standard JSON error response format / structure
@@ -25,11 +25,11 @@ func getStatusText(status int) string {
 }
 
 // JSONResponse sends a standard JSON response format / structure
-func JSONResponse(c *fiber.Ctx, status int, message string, results interface{}) error {
+func JSONResponse(c *fiber.Ctx, status int, message string, data interface{}) error {
 	resp := Response{
 		Status:  getStatusText(status),
 		Message: message,
-		Results: results,
+		Data:    data,
 	}
 	return c.Status(status).JSON(resp)
 }
