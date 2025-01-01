@@ -38,6 +38,10 @@ func main() {
 		seeders.ProductCategorySeed()
 		seeders.ProductSeed()
 		seeders.MemberCategorySeed()
+		seeders.MemberSeed()
+		seeders.SupplierCategorySeed()
+		seeders.SupplierSeed()
+		seeders.SupplierProductSeed()
 		os.Exit(0) // Exit after seeding
 	}
 
