@@ -31,7 +31,8 @@ func SetupDB() (err error) {
 	redis_port := os.Getenv("REDIS_PORT")
 
 	// Connect to database Postgres
-	dsn := "host=" + db_host + " user=" + db_user + " password=" + db_pass + " dbname=" + db_name + "  port=" + db_port + " sslmode=disable TimeZone=Asia/Jakarta"
+	// dsn := "host=" + db_host + " user=" + db_user + " password=" + db_pass + " dbname=" + db_name + "  port=" + db_port + " sslmode=disable TimeZone=Asia/Jakarta"
+	dsn := "user=" + db_user + " password=" + db_pass + " host=" + db_host + " port=" + db_port + " dbname=" + db_name + "  sslmode=disable"
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	// Migrate the schema
