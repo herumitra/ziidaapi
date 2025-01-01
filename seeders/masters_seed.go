@@ -18,7 +18,7 @@ func UnitSeed() {
 	config.DB.Create(&unit)
 }
 
-// Function for product category seed
+// Function for product category seed category
 func ProductCategorySeed() {
 	productCategory := []models.ProductCategory{
 		{ID: 1, Name: "Obat", BranchID: "BRC11122024001"},

@@ -113,6 +113,13 @@ func main() {
 	api_adm_op.Put("/products/:id", controllers.UpdateProduct)    //Update product berdasarkan ID
 	api_adm.Delete("/products/:id", controllers.DeleteProduct)    //Hapus product berdasarkan ID
 
+	// Endpoints for UnitConversion
+	api_adm_op.Post("/unit_conversions", controllers.CreateUnitConversion)       //Create new UnitConversion
+	api_adm_op_cs_fn.Get("/unit_conversions", controllers.GetAllUnitConversion)  //Menampilkan semua unit_conversion
+	api_adm_op_cs_fn.Get("/unit_conversions/:id", controllers.GetUnitConversion) //Menampilkan unit_conversion berdasarkan ID
+	api_adm_op.Put("/unit_conversions/:id", controllers.UpdateUnitConversion)    //Update unit_conversion berdasarkan ID
+	api_adm.Delete("/unit_conversions/:id", controllers.DeleteUnitConversion)    //Hapus unit_conversion berdasarkan ID
+
 	// Endpoints for MemberCategory
 	api_adm_op.Post("/member_categories", controllers.CreateMemberCategory)       //Create new MemberCategory
 	api_adm_op_cs_fn.Get("/member_categories", controllers.GetAllMemberCategory)  //Menampilkan semua member_category
