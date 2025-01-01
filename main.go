@@ -85,19 +85,19 @@ func main() {
 	api_adm_op.Put("/branches/:id", controllers.UpdateBranch) //Update branch berdasarkan ID
 	api_adm.Delete("/branches/:id", controllers.DeleteBranch) //Hapus branch berdasarkan ID
 
+	// Endpoints for UserBranch
+	api_adm.Post("/user_branches", controllers.CreateUserBranch)                     //Create new UserBranch
+	api_adm_op_cs_fn.Get("/user_branches", controllers.GetAllUserBranch)             //Menampilkan semua user_branch
+	api_adm_op_cs_fn.Get("/user_branches/:userid", controllers.GetUserBranch)        //Menampilkan user_branch berdasarkan ID
+	api_adm.Put("/user_branches/:userid/:branchid", controllers.UpdateUserBranch)    //Update user_branch berdasarkan ID
+	api_adm.Delete("/user_branches/:userid/:branchid", controllers.DeleteUserBranch) //Hapus user_branch berdasarkan ID
+
 	// Endpoints for Unit
 	api_adm_op.Post("/units", controllers.CreateUnit)       //Create new Unit
 	api_adm_op_cs_fn.Get("/units", controllers.GetAllUnit)  //Menampilkan semua unit
 	api_adm_op_cs_fn.Get("/units/:id", controllers.GetUnit) //Menampilkan unit berdasarkan ID
 	api_adm_op.Put("/units/:id", controllers.UpdateUnit)    //Update unit berdasarkan ID
 	api_adm.Delete("/units/:id", controllers.DeleteUnit)    //Hapus unit berdasarkan ID
-
-	// Endpoints for Product
-	api_adm_op.Post("/products", controllers.CreateProduct)       //Create new Product
-	api_adm_op_cs_fn.Get("/products", controllers.GetAllProduct)  //Menampilkan semua product
-	api_adm_op_cs_fn.Get("/products/:id", controllers.GetProduct) //Menampilkan product berdasarkan ID
-	api_adm_op.Put("/products/:id", controllers.UpdateProduct)    //Update product berdasarkan ID
-	api_adm.Delete("/products/:id", controllers.DeleteProduct)    //Hapus product berdasarkan ID
 
 	// Endpoints for ProductCategory
 	api_adm_op.Post("/product_categories", controllers.CreateProductCategory)       //Create new ProductCategory
@@ -106,12 +106,12 @@ func main() {
 	api_adm_op.Put("/product_categories/:id", controllers.UpdateProductCategory)    //Update product_category berdasarkan ID
 	api_adm.Delete("/product_categories/:id", controllers.DeleteProductCategory)    //Hapus product_category berdasarkan ID
 
-	// Endpoints for UserBranch
-	api_adm.Post("/user_branches", controllers.CreateUserBranch)                     //Create new UserBranch
-	api_adm_op_cs_fn.Get("/user_branches", controllers.GetAllUserBranch)             //Menampilkan semua user_branch
-	api_adm_op_cs_fn.Get("/user_branches/:userid", controllers.GetUserBranch)        //Menampilkan user_branch berdasarkan ID
-	api_adm.Put("/user_branches/:userid/:branchid", controllers.UpdateUserBranch)    //Update user_branch berdasarkan ID
-	api_adm.Delete("/user_branches/:userid/:branchid", controllers.DeleteUserBranch) //Hapus user_branch berdasarkan ID
+	// Endpoints for Product
+	api_adm_op.Post("/products", controllers.CreateProduct)       //Create new Product
+	api_adm_op_cs_fn.Get("/products", controllers.GetAllProduct)  //Menampilkan semua product
+	api_adm_op_cs_fn.Get("/products/:id", controllers.GetProduct) //Menampilkan product berdasarkan ID
+	api_adm_op.Put("/products/:id", controllers.UpdateProduct)    //Update product berdasarkan ID
+	api_adm.Delete("/products/:id", controllers.DeleteProduct)    //Hapus product berdasarkan ID
 
 	// Endpoints for MemberCategory
 	api_adm_op.Post("/member_categories", controllers.CreateMemberCategory)       //Create new MemberCategory
