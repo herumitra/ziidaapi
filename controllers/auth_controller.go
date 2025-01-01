@@ -27,7 +27,7 @@ func generateJWT(user models.User) (string, error) {
 	// Define JWT claims
 	claims := jwt.MapClaims{
 		"sub": user.ID,
-		"exp": time.Now().Add(8 * time.Hour).Unix(),
+		"exp": time.Now().Add(5 * time.Minute).Unix(),
 		// "exp": time.Now().Add(5 * time.Minute).Unix(),
 	}
 	// Generate the token using the claims and a signing key
