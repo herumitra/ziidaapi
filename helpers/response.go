@@ -1,6 +1,8 @@
 package helpers
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/gofiber/fiber/v2"
+)
 
 // Response represents the standard JSON response format / structure
 type Response struct {
