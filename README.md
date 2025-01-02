@@ -16,7 +16,7 @@ Di dalam repositori ini juga kami terapkan framework `Fiber` serta dependensi `G
 ```bash
 JWT_SECRET=Sikrit1234
 DB_USER=ziida
-DB_PASSWORD=Pass1234
+DB_PASS=Pass1234
 DB_NAME=ziida
 DB_HOST=localhost
 DB_PORT=5432
