@@ -32,7 +32,7 @@ func SetupDB() (err error) {
 
 	// Connect to database Postgres
 	// dsn := "host=" + db_host + " user=" + db_user + " password=" + db_pass + " dbname=" + db_name + "  port=" + db_port + " sslmode=disable TimeZone=Asia/Jakarta"
-	dsn := "user=" + db_user + " password=" + db_pass + " host=" + db_host + " port=" + db_port + " dbname=" + db_name + "  sslmode=disable"
+	dsn := "user=" + db_user + " password=" + db_pass + " host=" + db_host + " port=" + db_port + " dbname=" + db_name + "  sslmode=disable TimeZone=Asia/Jakarta"
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	// Migrate the schema

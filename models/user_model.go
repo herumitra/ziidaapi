@@ -17,6 +17,7 @@ const (
 	Cashier       UserRole = "cashier"
 	Finance       UserRole = "finance"
 	Administrator UserRole = "administrator"
+	Superadmin    UserRole = "super admin"
 )
 
 // Initialize user model
