@@ -10,7 +10,7 @@ func JWTMiddleware(c *fiber.Ctx) error {
 	helpers.TokenValidation(c, "sub")
 
 	// Lanjutkan ke handler berikutnya
-	return c.Next()
+	return nil
 }
 
 func RoleMiddleware(allowedRoles ...models.UserRole) fiber.Handler {
@@ -28,4 +28,5 @@ func RoleMiddleware(allowedRoles ...models.UserRole) fiber.Handler {
 		// Jika role tidak sesuai, tolak akses
 		return helpers.JSONResponse(c, fiber.StatusForbidden, "Forbidden", "You don't have permission to access this resource!")
 	}
+	return nil
 }

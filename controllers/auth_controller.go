@@ -38,7 +38,7 @@ func generateJWT(user models.User) (string, error) {
 }
 
 // Fungsi untuk menambahkan token ke blacklist di Redis dengan TTL 8 jam
-func blacklistToken(token string) error {
+func blacklistToken(c *fiber.Ctx, token string) error {
 	// Parse token untuk mendapatkan waktu kedaluwarsa (exp)
 	parsedToken, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
 		secretKey := []byte(os.Getenv("JWT_SECRET"))
@@ -126,7 +126,7 @@ func Logout(c *fiber.Ctx) error {
 	}
 
 	// Blacklist token JWT
-	if err := blacklistToken(token); err != nil {
+	if err := blacklistToken(c, token); err != nil {
 		return helpers.JSONResponse(c, fiber.StatusInternalServerError, "Logout failed", "Failed to blacklist token")
 	}
 
@@ -162,6 +162,16 @@ func SetBranch(c *fiber.Ctx) error {
 		return helpers.JSONResponse(c, fiber.StatusUnauthorized, "Invalid token claims", "Try to login again!")
 	}
 
+	// Cek apakah token masuk dalam blacklist Redis
+	ctx := context.Background()
+	redisKey := fmt.Sprintf("blacklist:%s", token)
+	rdb := config.RDB
+	isBlacklisted, err := rdb.Exists(ctx, redisKey).Result()
+
+	if isBlacklisted > 0 {
+		return helpers.JSONResponse(c, fiber.StatusUnauthorized, "Using token failed", "Token was revoked, please login again!")
+	}
+
 	// Ambil user ID dari klaim token
 	userID := string(claims["sub"].(string))
 
@@ -192,7 +202,7 @@ func SetBranch(c *fiber.Ctx) error {
 	}
 
 	// Tambahkan token lama ke Redis blacklist
-	if err := blacklistToken(token); err != nil {
+	if err := blacklistToken(c, token); err != nil {
 		return helpers.JSONResponse(c, fiber.StatusInternalServerError, "Failed to set branch", "Failed to blacklist old token")
 	}
 
@@ -224,6 +234,7 @@ func GetProfile(c *fiber.Ctx) error {
 	branchID, _ := services.GetBranchID(c)
 	userID, _ := services.GetUserID(c)
 	userRole, _ := services.GetUserRole(c)
+
 	var profilStruct models.ProfileStruct
 
 	// Melakukan LEFT OUTER JOIN menggunakan GORM

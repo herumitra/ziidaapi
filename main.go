@@ -56,11 +56,11 @@ func main() {
 	app.Post("/logout", controllers.Logout)
 	app.Get("/profile", middleware.JWTMiddleware, controllers.GetProfile)
 
-	// API routes with JWT middleware applied
-	api := app.Group("/api", middleware.JWTMiddleware) // Perbaikan: panggil middleware tanpa tanda kurung
+	// // API routes with JWT middleware applied
+	// api := app.Group("/api", middleware.JWTMiddleware) // Perbaikan: panggil middleware tanpa tanda kurung
 
 	// Endpoints for SetBranch
-	api.Post("/set_branch", controllers.SetBranch)
+	app.Post("/set_branch", controllers.SetBranch)
 
 	// API routes with JWT and role middleware applied
 	api_adm := app.Group("/api", middleware.JWTMiddleware, middleware.RoleMiddleware("administrator"))
